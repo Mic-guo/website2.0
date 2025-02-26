@@ -56,7 +56,7 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
     if (!texturePath || !groupRef.current || !gltf || !texture) return;
 
     // Clean up previous instance
-    cleanup();
+    // cleanup();
 
     // Clone the scene
     clonedSceneRef.current = gltf.scene.clone(true);
@@ -99,8 +99,8 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
       groupRef.current.add(clonedSceneRef.current);
     }
 
-    return cleanup;
-  }, [texturePath, gltf, texture, cleanup]);
+    // return cleanup;
+  }, [texturePath, gltf, texture /* , cleanup */]);
 
   // Update model based on rope physics
   useFrame(() => {

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, SpotLight } from "@react-three/drei";
 import * as THREE from "three";
@@ -43,6 +43,82 @@ function CameraSetup() {
   return null;
 }
 
+function Wind() {
+  const mousePos = useRef({ x: 0, y: 0 });
+  const lastMousePos = useRef({ x: 0, y: 0 });
+  const windForce = useRef({ x: 0, y: 0, z: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      // Update current mouse position
+      mousePos.current = {
+        x: event.clientX,
+        y: event.clientY,
+      };
+
+      // Calculate mouse movement direction
+      const deltaX = mousePos.current.x - lastMousePos.current.x;
+      const deltaY = mousePos.current.y - lastMousePos.current.y;
+
+      // Only update wind if there's movement
+      if (deltaX !== 0 || deltaY !== 0) {
+        // Calculate the magnitude of the movement
+        const magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+        // Normalize the direction and apply constant force
+        const constantForce = 0.01; // Adjust this to set the constant wind strength
+        windForce.current = {
+          x: (deltaX / magnitude) * constantForce,
+          y: (deltaY / magnitude) * constantForce * 0.2, // Reduced vertical effect
+          z: (deltaX / magnitude) * constantForce * 0.3, // Add some depth movement
+        };
+
+        // Dispatch wind force
+        window.dispatchEvent(
+          new CustomEvent("wind-update", {
+            detail: windForce.current,
+          })
+        );
+      }
+
+      // Store current position as last position
+      lastMousePos.current = { ...mousePos.current };
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
+  // Add wind decay
+  useFrame(() => {
+    // Gradually reduce wind force when mouse isn't moving
+    const decay = 0.95;
+    windForce.current = {
+      x: windForce.current.x * decay,
+      y: windForce.current.y * decay,
+      z: windForce.current.z * decay,
+    };
+
+    // Only dispatch if there's still significant force
+    if (
+      Math.abs(windForce.current.x) > 0.001 ||
+      Math.abs(windForce.current.y) > 0.001 ||
+      Math.abs(windForce.current.z) > 0.001
+    ) {
+      window.dispatchEvent(
+        new CustomEvent("wind-update", {
+          detail: windForce.current,
+        })
+      );
+    }
+  });
+
+  return null;
+}
+
 // Main Scene component that replaces SceneManager
 function Scene({ devMode = false, children }) {
   return (
@@ -75,6 +151,7 @@ function Scene({ devMode = false, children }) {
         maxAzimuthAngle={Math.PI / 3} // 60 degrees right
         minAzimuthAngle={-(Math.PI / 3)} // 60 degrees left
       />
+      <Wind />
       {children}
     </Canvas>
   );

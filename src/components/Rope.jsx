@@ -137,6 +137,35 @@ export function Rope({
     allModels.current.set(nodeIndex, model);
   }, []);
 
+  useEffect(() => {
+    const handleWind = (event) => {
+      const windForce = event.detail;
+      
+      // Apply wind force to each node of the soft body
+      const numNodes = softBody.get_m_nodes().size();
+      for (let i = 0; i < numNodes; i++) {
+        const node = softBody.get_m_nodes().at(i);
+        const force = new Ammo.btVector3(
+          windForce.x,
+          windForce.y,
+          windForce.z
+        );
+        node.m_f.setX(node.m_f.x() + force.x());
+        node.m_f.setY(node.m_f.y() + force.y());
+        node.m_f.setZ(node.m_f.z() + force.z());
+        
+        // Clean up the temporary btVector3
+        Ammo.destroy(force);
+      }
+    };
+
+    window.addEventListener('wind-update', handleWind);
+    
+    return () => {
+      window.removeEventListener('wind-update', handleWind);
+    };
+  }, [softBody]);
+
   // Create instanced mesh for rope segments
   return (
     <instancedMesh ref={ropeMeshRef} args={[null, null, ropeSegments - 1]}>
