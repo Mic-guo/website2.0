@@ -69,6 +69,7 @@ function Scene({ devMode = false, children }) {
         enableDamping
         dampingFactor={0.08}
         rotateSpeed={0.4}
+        enableRotate={false}
         enablePan={false}
         maxPolarAngle={(Math.PI * 5) / 6} // 120 degrees from top
         minPolarAngle={Math.PI / 6} // 120 degrees from bottom // Can't look below 120degrees

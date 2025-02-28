@@ -81,7 +81,6 @@ function App() {
                 yOffset={yOffset}
                 ropeIndex={ropeIndex}
                 modelPerRope={7}
-                modelOnRopeOffset={7}
               />
             ))}
           </>

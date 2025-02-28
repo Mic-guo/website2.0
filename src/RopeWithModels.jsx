@@ -3,13 +3,10 @@ import { Model } from "./components/Model";
 import { Rope } from "./components/Rope";
 
 const RopeWithModels = memo(
-  ({
-    physicsWorld,
-    yOffset,
-    ropeIndex,
-    modelPerRope = 7,
-    modelOnRopeOffset = 7,
-  }) => {
+  ({ physicsWorld, yOffset, ropeIndex, modelPerRope }) => {
+    const ropeSegments = 120;
+    const ropeLength = 1;
+    const modelOnRopeOffset = (ropeSegments - 1) / modelPerRope;
     const [ropeState, setRopeState] = useState({
       ref: null,
       ready: false,
@@ -17,11 +14,7 @@ const RopeWithModels = memo(
 
     const handleRopeReady = useCallback(
       ({ softBody, setNodePosition, attachModel }) => {
-        console.log(`Rope ${ropeIndex} is ready`, {
-          softBody,
-          setNodePosition,
-          attachModel,
-        });
+        console.log(`Rope ${ropeIndex} is ready`);
         setRopeState({
           ref: { softBody, setNodePosition, attachModel },
           ready: true,
@@ -44,8 +37,6 @@ const RopeWithModels = memo(
           imageIndex <= 15
             ? `/images/IMG_00${imageIndex.toString().padStart(2, "0")}.jpeg`
             : null;
-
-        // console.log("Generated image path:", imagePath);
 
         modelArray.push(
           <Model
@@ -72,8 +63,8 @@ const RopeWithModels = memo(
           physicsWorld={physicsWorld}
           yOffset={yOffset}
           onRopeReady={handleRopeReady}
-          ropeSegments={60}
-          ropeLength={6}
+          ropeSegments={ropeSegments}
+          ropeLength={ropeLength}
         />
         {models}
       </>

@@ -5,16 +5,18 @@ import { useTexture } from "@react-three/drei";
 
 export function Rope({
   physicsWorld,
-  yOffset = 2,
+  yOffset,
   onRopeReady,
-  ropeSegments = 60,
-  ropeLength = 6,
+  ropeSegments,
+  ropeLength,
 }) {
   const ropeMeshRef = useRef();
   const [softBody, setSoftBody] = useState(null);
   const initialSegmentLength = ropeLength / (ropeSegments - 1);
-  const modelSegmentLength = ropeSegments / 9;
   const allModels = useRef(new Map());
+
+  // Track which nodes are being dragged by user interaction
+  const draggedNodes = useRef(new Set());
 
   // Load rope texture using drei's useTexture
   const ropeTexture = useTexture("src/textures/white_string.jpg");
@@ -44,15 +46,28 @@ export function Rope({
     const sbConfig = newSoftBody.get_m_cfg();
     sbConfig.set_viterations(20); // Velocity iterations
     sbConfig.set_piterations(20); // Position iterations
-    sbConfig.set_kDP(0.001); // Damping coefficient
-    sbConfig.set_kLF(0.001); // Resistance to movement
+    sbConfig.set_kDP(0.01); // Damping coefficient
+    sbConfig.set_kLF(0.01); // Resistance to movement
+
+    // Set additional parameters to control rope stiffness
+    sbConfig.set_kVC(0.1); // Volume conservation coefficient (controls stretchiness)
+    sbConfig.set_kSRHR_CL(0.1); // Additional strength for structural constraints
+    sbConfig.set_kSKHR_CL(0.1); // Additional strength for flex constraints
+
+    // Set collision flags for better interaction
+    newSoftBody.setCollisionFlags(0);
 
     // Fix end points
     const nodes = newSoftBody.get_m_nodes();
     const firstNode = nodes.at(0);
     const lastNode = nodes.at(nodes.size() - 1);
+
+    // Fix end points by setting inverse mass to 0
     firstNode.set_m_im(0);
     lastNode.set_m_im(0);
+
+    // Make sure the softBody is initially active
+    newSoftBody.activate(true);
 
     physicsWorld.addSoftBody(newSoftBody, 1, -1);
     newSoftBody.setTotalMass(0.01, false);
@@ -61,7 +76,7 @@ export function Rope({
     if (onRopeReady) {
       onRopeReady({
         softBody: newSoftBody,
-        setNodePosition,
+        setModelDragging, // Provide the new function to models
         attachModel,
       });
     }
@@ -80,8 +95,11 @@ export function Rope({
 
     const nodes = softBody.get_m_nodes();
 
-    // Update models
+    // Update models, but only those that are NOT being dragged
     allModels.current.forEach((model, nodeIndex) => {
+      // Skip updating models that are being actively dragged
+      if (draggedNodes.current.has(nodeIndex)) return;
+
       const node = nodes.at(nodeIndex);
       const pos = node.get_m_x();
       model.updatePosition(new THREE.Vector3(pos.x(), pos.y(), pos.z()));
@@ -120,18 +138,14 @@ export function Rope({
     ropeMeshRef.current.instanceMatrix.needsUpdate = true;
   });
 
-  const setNodePosition = useCallback(
-    (index, position) => {
-      if (!softBody) return;
-
-      const nodes = softBody.get_m_nodes();
-      const node = nodes.at(index);
-      const pos = new Ammo.btVector3(position.x, position.y, position.z);
-      node.set_m_x(pos);
-      node.set_m_v(new Ammo.btVector3(0, 0, 0));
-    },
-    [softBody]
-  );
+  // Function to set a node as being dragged or not
+  const setModelDragging = useCallback((nodeIndex, isDragging) => {
+    if (isDragging) {
+      draggedNodes.current.add(nodeIndex);
+    } else {
+      draggedNodes.current.delete(nodeIndex);
+    }
+  }, []);
 
   const attachModel = useCallback((model, nodeIndex) => {
     allModels.current.set(nodeIndex, model);
