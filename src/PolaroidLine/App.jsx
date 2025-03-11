@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import Scene from "./components/Scene";
-import RopeWithModels from "./RopeWithModels";
+import RopeWithModels from "../RopeWithModels";
 
 // This component handles the physics simulation within the Canvas context
 function PhysicsSimulation({ physicsWorld }) {

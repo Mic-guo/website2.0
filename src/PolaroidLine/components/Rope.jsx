@@ -16,7 +16,7 @@ export function Rope({
   const allModels = useRef(new Map());
 
   // Load rope texture using drei's useTexture
-  const ropeTexture = useTexture("src/textures/white_string.jpg");
+  const ropeTexture = useTexture("src/PolaroidLine/textures/white_string.jpg");
   useEffect(() => {
     ropeTexture.wrapS = THREE.RepeatWrapping;
     ropeTexture.wrapT = THREE.RepeatWrapping;
@@ -41,15 +41,21 @@ export function Rope({
     );
 
     const sbConfig = newSoftBody.get_m_cfg();
-    sbConfig.set_viterations(20); // Velocity iterations
-    sbConfig.set_piterations(20); // Position iterations
+    sbConfig.set_viterations(30); // Velocity iterations
+    sbConfig.set_piterations(30); // Position iterations
     sbConfig.set_kDP(0.1); // Damping coefficient
     sbConfig.set_kLF(0.0001); // Resistance to movement
 
-    // Set additional parameters to control rope stiffness
-    sbConfig.set_kVC(0.1); // Volume conservation coefficient (controls stretchiness)
-    sbConfig.set_kSRHR_CL(0.1); // Additional strength for structural constraints
-    sbConfig.set_kSKHR_CL(0.1); // Additional strength for flex constraints
+    // Increased stiffness parameters
+    sbConfig.set_kVC(0.5);
+    sbConfig.set_kSRHR_CL(0.8);
+    sbConfig.set_kSKHR_CL(0.8);
+
+    // Add these new parameters
+    sbConfig.set_kSSHR_CL(0.8); // Adds additional softbody stiffness
+    sbConfig.set_kSS_SPLT_CL(0.5); // Prevents excessive stretching
+
+    newSoftBody.setTotalMass(0.1, false);
 
     // Set collision flags for better interaction
     newSoftBody.setCollisionFlags(0);
@@ -67,7 +73,6 @@ export function Rope({
     newSoftBody.activate(true);
 
     physicsWorld.addSoftBody(newSoftBody, 1, -1);
-    newSoftBody.setTotalMass(0.01, false);
 
     setSoftBody(newSoftBody);
     if (onRopeReady) {

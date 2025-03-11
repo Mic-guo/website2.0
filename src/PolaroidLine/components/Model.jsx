@@ -162,7 +162,6 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
   // Update model position during drag
   useFrame(() => {
     if (isDragging && groupRef.current && rope) {
-      // Calculate the point where the ray intersects with the Z plane
       const distanceFromCamera = camera.position.z - dragPlaneZ;
       const pointerWorld = new THREE.Vector3(pointer.x, pointer.y, 0)
         .unproject(camera)
@@ -176,14 +175,52 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
         if (nodes && positionOnRope < nodes.size()) {
           const node = nodes.at(positionOnRope);
 
-          // Simply update the node's position with some damping
-          const dampingFactor = 1;
+          // Add constraint checking
+          const prevNode = nodes.at(Math.max(0, positionOnRope - 1));
+          const nextNode = nodes.at(
+            Math.min(nodes.size() - 1, positionOnRope + 1)
+          );
+
+          // Get current positions
+          const prevPos = new THREE.Vector3(
+            prevNode.get_m_x().x(),
+            prevNode.get_m_x().y(),
+            prevNode.get_m_x().z()
+          );
+
+          const nextPos = new THREE.Vector3(
+            nextNode.get_m_x().x(),
+            nextNode.get_m_x().y(),
+            nextNode.get_m_x().z()
+          );
+
+          // Calculate maximum allowed movement
+          const maxStretch = 2.0; // Maximum stretch factor
+          const restLength = rope.ropeLength / (nodes.size() - 1);
+
+          // Constrain the new position
+          const toPrev = prevPos.clone().sub(pointerWorld);
+          const toNext = nextPos.clone().sub(pointerWorld);
+
+          if (toPrev.length() > restLength * maxStretch) {
+            pointerWorld
+              .copy(prevPos)
+              .sub(toPrev.normalize().multiplyScalar(restLength * maxStretch));
+          }
+          if (toNext.length() > restLength * maxStretch) {
+            pointerWorld
+              .copy(nextPos)
+              .sub(toNext.normalize().multiplyScalar(restLength * maxStretch));
+          }
+
+          // Apply damping
           const currentPos = new THREE.Vector3(
             node.get_m_x().x(),
             node.get_m_x().y(),
             node.get_m_x().z()
           );
 
+          const dampingFactor = 0.5; // Reduced from 1 for smoother movement
           const newPos = new THREE.Vector3().lerpVectors(
             currentPos,
             pointerWorld,
@@ -193,8 +230,6 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
           // Update the node position
           const pos = new Ammo.btVector3(newPos.x, newPos.y, newPos.z);
           node.set_m_x(pos);
-
-          // The model position will automatically follow the node through the existing update logic
           Ammo.destroy(pos);
         }
       }
