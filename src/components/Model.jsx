@@ -3,6 +3,7 @@ import { useLoader, useFrame, useThree } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
+import { useControlsStore } from "../stores/controlsStore";
 
 export function Model({ path, texturePath, rope, positionOnRope }) {
   // Default values as constants
@@ -34,21 +35,16 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
   const { camera, pointer, raycaster, gl } = useThree();
   const dragPlaneZ = 0;
 
+  const setEnableRotate = useControlsStore((state) => state.setEnableRotate);
+
   // Handle mouse interactions
   const onPointerDown = useCallback(
     (e) => {
       e.stopPropagation();
       setIsDragging(true);
 
-      // Notify rope that this model is being dragged (allows rope to stop updating it)
-      if (rope && rope.setModelDragging) {
-        rope.setModelDragging(positionOnRope, true);
-      } else if (rope) {
-        console.warn(
-          "setModelDragging is not available in the rope object",
-          rope
-        );
-      }
+      // Disable rotation while dragging the model
+      setEnableRotate(false);
 
       // Capture pointer to track it even when it leaves the canvas
       gl.domElement.setPointerCapture(e.pointerId);
@@ -57,10 +53,8 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
       const handleGlobalPointerUp = () => {
         setIsDragging(false);
 
-        // Notify rope that this model is no longer being dragged
-        if (rope && rope.setModelDragging) {
-          rope.setModelDragging(positionOnRope, false);
-        }
+        // Re-enable rotation when done dragging
+        setEnableRotate(true);
 
         document.removeEventListener("pointerup", handleGlobalPointerUp);
         if (e.pointerId) gl.domElement.releasePointerCapture(e.pointerId);
@@ -68,7 +62,7 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
 
       document.addEventListener("pointerup", handleGlobalPointerUp);
     },
-    [gl, rope, positionOnRope]
+    [gl, rope, positionOnRope, setEnableRotate]
   );
 
   // Apply texture and setup model
@@ -177,45 +171,31 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
         .multiplyScalar(distanceFromCamera)
         .add(camera.position);
 
-      // Create a delayed position with lerping
-      const lerpFactor = 0.5;
-      const currentPos = groupRef.current.position;
-      const newPosition = new THREE.Vector3().lerpVectors(
-        currentPos,
-        pointerWorld,
-        lerpFactor
-      );
-
-      // Update position of the model directly
-      groupRef.current.position.copy(newPosition);
-
-      // Control the rope with a higher force when dragging
       if (rope.softBody) {
         const nodes = rope.softBody.get_m_nodes();
         if (nodes && positionOnRope < nodes.size()) {
           const node = nodes.at(positionOnRope);
 
-          // Force-based approach with a very high factor
-          const forceFactorDragging = 1; // Very strong force when dragging
-
-          // Set position directly
-          const pos = new Ammo.btVector3(
-            newPosition.x,
-            newPosition.y,
-            newPosition.z
+          // Simply update the node's position with some damping
+          const dampingFactor = 1;
+          const currentPos = new THREE.Vector3(
+            node.get_m_x().x(),
+            node.get_m_x().y(),
+            node.get_m_x().z()
           );
+
+          const newPos = new THREE.Vector3().lerpVectors(
+            currentPos,
+            pointerWorld,
+            dampingFactor
+          );
+
+          // Update the node position
+          const pos = new Ammo.btVector3(newPos.x, newPos.y, newPos.z);
           node.set_m_x(pos);
 
-          // Apply a strong impulse/velocity
-          const velocity = new Ammo.btVector3(
-            (newPosition.x - currentPos.x) * forceFactorDragging,
-            (newPosition.y - currentPos.y) * forceFactorDragging,
-            (newPosition.z - currentPos.z) * forceFactorDragging
-          );
-          node.set_m_v(velocity);
-
-          // Activate the softBody
-          rope.softBody.activate(true);
+          // The model position will automatically follow the node through the existing update logic
+          Ammo.destroy(pos);
         }
       }
     }

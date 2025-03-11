@@ -44,7 +44,7 @@ const RopeWithModels = memo(
             path="/src/models/polaroid_with_material.glb"
             texturePath={imagePath}
             rope={ropeState.ref}
-            positionOnRope={i * modelOnRopeOffset}
+            positionOnRope={i * modelOnRopeOffset - modelOnRopeOffset / 2}
           />
         );
       }
@@ -71,7 +71,5 @@ const RopeWithModels = memo(
     );
   }
 );
-
-// RopeWithModels.displayName = "RopeWithModels";
 
 export default RopeWithModels;

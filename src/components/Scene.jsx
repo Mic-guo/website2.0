@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, SpotLight } from "@react-three/drei";
 import * as THREE from "three";
+import { useControlsStore } from "../stores/controlsStore";
 
 // Lighting component to replace the original lighting setup
 function Lighting({ spotlightMode = false }) {
@@ -45,6 +46,8 @@ function CameraSetup() {
 
 // Main Scene component that replaces SceneManager
 function Scene({ devMode = false, children }) {
+  const { setControlsRef, enableRotate } = useControlsStore();
+
   return (
     <Canvas
       style={{ background: "#f0ebe5" }}
@@ -66,15 +69,16 @@ function Scene({ devMode = false, children }) {
       <CameraSetup />
       <Lighting />
       <OrbitControls
+        ref={setControlsRef}
         enableDamping
         dampingFactor={0.08}
         rotateSpeed={0.4}
-        enableRotate={false}
+        enableRotate={enableRotate}
         enablePan={false}
-        maxPolarAngle={(Math.PI * 5) / 6} // 120 degrees from top
-        minPolarAngle={Math.PI / 6} // 120 degrees from bottom // Can't look below 120degrees
-        maxAzimuthAngle={Math.PI / 3} // 60 degrees right
-        minAzimuthAngle={-(Math.PI / 3)} // 60 degrees left
+        maxPolarAngle={(Math.PI * 5) / 6}
+        minPolarAngle={Math.PI / 6}
+        maxAzimuthAngle={Math.PI / 3}
+        minAzimuthAngle={-(Math.PI / 3)}
       />
       {children}
     </Canvas>

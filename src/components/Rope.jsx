@@ -15,9 +15,6 @@ export function Rope({
   const initialSegmentLength = ropeLength / (ropeSegments - 1);
   const allModels = useRef(new Map());
 
-  // Track which nodes are being dragged by user interaction
-  const draggedNodes = useRef(new Set());
-
   // Load rope texture using drei's useTexture
   const ropeTexture = useTexture("src/textures/white_string.jpg");
   useEffect(() => {
@@ -46,8 +43,8 @@ export function Rope({
     const sbConfig = newSoftBody.get_m_cfg();
     sbConfig.set_viterations(20); // Velocity iterations
     sbConfig.set_piterations(20); // Position iterations
-    sbConfig.set_kDP(0.01); // Damping coefficient
-    sbConfig.set_kLF(0.01); // Resistance to movement
+    sbConfig.set_kDP(0.1); // Damping coefficient
+    sbConfig.set_kLF(0.0001); // Resistance to movement
 
     // Set additional parameters to control rope stiffness
     sbConfig.set_kVC(0.1); // Volume conservation coefficient (controls stretchiness)
@@ -76,7 +73,6 @@ export function Rope({
     if (onRopeReady) {
       onRopeReady({
         softBody: newSoftBody,
-        setModelDragging, // Provide the new function to models
         attachModel,
       });
     }
@@ -97,9 +93,6 @@ export function Rope({
 
     // Update models, but only those that are NOT being dragged
     allModels.current.forEach((model, nodeIndex) => {
-      // Skip updating models that are being actively dragged
-      if (draggedNodes.current.has(nodeIndex)) return;
-
       const node = nodes.at(nodeIndex);
       const pos = node.get_m_x();
       model.updatePosition(new THREE.Vector3(pos.x(), pos.y(), pos.z()));
@@ -137,15 +130,6 @@ export function Rope({
 
     ropeMeshRef.current.instanceMatrix.needsUpdate = true;
   });
-
-  // Function to set a node as being dragged or not
-  const setModelDragging = useCallback((nodeIndex, isDragging) => {
-    if (isDragging) {
-      draggedNodes.current.add(nodeIndex);
-    } else {
-      draggedNodes.current.delete(nodeIndex);
-    }
-  }, []);
 
   const attachModel = useCallback((model, nodeIndex) => {
     allModels.current.set(nodeIndex, model);
