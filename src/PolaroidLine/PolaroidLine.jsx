@@ -13,7 +13,7 @@ function PhysicsSimulation({ physicsWorld }) {
   return null;
 }
 
-function App() {
+function PolaroidLine() {
   const [isPhysicsReady, setPhysicsReady] = React.useState(false);
   const physicsWorldRef = useRef(null);
 
@@ -90,4 +90,4 @@ function App() {
   );
 }
 
-export default App;
+export default PolaroidLine;
