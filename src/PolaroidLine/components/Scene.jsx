@@ -3,6 +3,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, SpotLight } from "@react-three/drei";
 import * as THREE from "three";
 import { useControlsStore } from "../stores/controlsStore";
+import { useTheme } from "../../context/ThemeContext";
 
 // Lighting component to replace the original lighting setup
 function Lighting({ spotlightMode = false }) {
@@ -47,10 +48,11 @@ function CameraSetup() {
 // Main Scene component that replaces SceneManager
 function Scene({ devMode = false, children }) {
   const { setControlsRef, enableRotate } = useControlsStore();
+  const theme = useTheme();
 
   return (
     <Canvas
-      style={{ background: "#f0ebe5" }}
+      className={theme.background}
       camera={{ fov: 75, near: 0.1, far: 1000 }}
       {...(!devMode && {
         gl: {

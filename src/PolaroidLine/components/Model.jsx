@@ -4,13 +4,13 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
 import { useControlsStore } from "../stores/controlsStore";
+import { useLoadingStore } from "../stores/loadingStore";
+// Default values as constants
+const DEFAULT_POSITION = [0, 2, 0];
+const DEFAULT_SCALE = [0.5, 0.5, 0.5];
+const DEFAULT_ROTATION = [0, 0, 0];
 
 export function Model({ path, texturePath, rope, positionOnRope }) {
-  // Default values as constants
-  const DEFAULT_POSITION = [0, 2, 0];
-  const DEFAULT_SCALE = [0.5, 0.5, 0.5];
-  const DEFAULT_ROTATION = [0, 0, 0];
-
   const groupRef = useRef();
   const materialRef = useRef(null);
   const clonedSceneRef = useRef(null);
@@ -243,11 +243,14 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
     }
   }, []);
 
+  const { updateProgress } = useLoadingStore();
+
   // Ensure the model is properly attached to the rope
   useEffect(() => {
     if (rope && rope.attachModel && typeof rope.attachModel === "function") {
       console.log("Attaching model to rope at position:", positionOnRope);
       rope.attachModel({ updatePosition }, positionOnRope);
+      updateProgress();
     } else if (rope) {
       console.warn("attachModel is not a function in the rope object", rope);
     }

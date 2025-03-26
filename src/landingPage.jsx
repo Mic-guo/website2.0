@@ -4,6 +4,8 @@ import { TextPlugin } from "gsap/TextPlugin";
 import { FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { useTheme } from "./context/ThemeContext";
+import { useNavigate } from "react-router-dom";
+import SocialLink from "./components/SocialLink";
 
 gsap.registerPlugin(TextPlugin);
 
@@ -11,6 +13,8 @@ const LandingPage = () => {
   const theme = useTheme();
   const textRef = useRef(null);
   const cursorRef = useRef(null);
+  const contentRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const texts = ["Software Engineer", "Web Developer", "Photographer"];
@@ -51,58 +55,64 @@ const LandingPage = () => {
     });
   }, []);
 
+  const handleClick = () => {
+    // Create zoom animation
+    gsap.to(contentRef.current, {
+      scale: 10,
+      opacity: 0,
+      duration: 1.5,
+      ease: "power2.inOut",
+      onComplete: () => {
+        navigate("/polaroid");
+      },
+    });
+  };
+
+  const socialLinks = [
+    {
+      href: "https://github.com/Mic-Guo",
+      icon: FaGithub,
+    },
+    {
+      href: "https://www.linkedin.com/in/Mic-guo/",
+      icon: FaLinkedin,
+    },
+    {
+      href: "https://www.instagram.com/michael.goop/",
+      icon: FaInstagram,
+    },
+    {
+      href: "mailto:mickeyg@umich.edu",
+      icon: MdEmail,
+    },
+  ];
+
   return (
     <>
       <div
-        className={`h-screen w-full flex justify-center items-center ${theme.background} flex-col relative overflow-hidden`}
+        className={`h-screen w-full flex justify-center items-center ${theme.background} flex-col relative overflow-hidden cursor-pointer`}
+        onClick={handleClick}
       >
         {/* Main content */}
-        <div className="flex flex-col gap-2 justify-center items-center z-10">
-          <h1
-            className={`text-6xl ${theme.textPrimary} font-leiko tracking-tight`}
-          >
-            Michael Guo
-          </h1>
-          <div className={`flex text-6xl ${theme.textSecondary} font-leiko`}>
-            <h1 ref={textRef}></h1>
-            <span ref={cursorRef}>|</span>
+        <div ref={contentRef} className="flex flex-col items-center">
+          <div className="flex flex-col gap-2 justify-center items-center z-10">
+            <h1
+              className={`text-6xl ${theme.textPrimary} font-leiko tracking-tight`}
+            >
+              Michael Guo
+            </h1>
+            <div className={`flex text-6xl ${theme.textSecondary} font-leiko`}>
+              <h1 ref={textRef}></h1>
+              <span ref={cursorRef}>|</span>
+            </div>
           </div>
-        </div>
 
-        {/* Social links */}
-        <div className="flex justify-between items-center gap-8 mt-6 z-10">
-          <a
-            href="https://github.com/Mic-Guo"
-            className={`${theme.iconDefault} text-2xl ${theme.iconHover} transition-colors duration-300`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaGithub />
-          </a>
-          <a
-            href="https://www.linkedin.com/in/Mic-guo/"
-            className={`${theme.iconDefault} text-2xl ${theme.iconHover} transition-colors duration-300`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaLinkedin />
-          </a>
-          <a
-            href="https://www.instagram.com/michael.goop/"
-            className={`${theme.iconDefault} text-2xl ${theme.iconHover} transition-colors duration-300`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaInstagram />
-          </a>
-          <a
-            href="mailto:mickeyg@umich.edu"
-            className={`${theme.iconDefault} text-2xl ${theme.iconHover} transition-colors duration-300`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <MdEmail />
-          </a>
+          {/* Social links */}
+          <div className="flex justify-between items-center gap-8 mt-6 z-10">
+            {socialLinks.map((link, index) => (
+              <SocialLink key={index} href={link.href} icon={link.icon} />
+            ))}
+          </div>
         </div>
       </div>
     </>

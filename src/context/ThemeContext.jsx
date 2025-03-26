@@ -9,6 +9,7 @@ export const ThemeProvider = ({ children }) => {
     textSecondary: "text-amber-700",
     iconDefault: "text-stone-700",
     iconHover: "hover:text-amber-600",
+    fontLeiko: "font-leiko",
   };
 
   return (

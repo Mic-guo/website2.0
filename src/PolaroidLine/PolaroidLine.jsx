@@ -1,8 +1,9 @@
-import React, { useRef, useEffect, useMemo } from "react";
+import React, { useRef, useEffect, useMemo, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import Scene from "./components/Scene";
-import RopeWithModels from "../RopeWithModels";
-
+import RopeWithModels from "./components/RopeWithModels";
+import { useLoadingStore } from "./stores/loadingStore";
+import { useTheme } from "../context/ThemeContext";
 // This component handles the physics simulation within the Canvas context
 function PhysicsSimulation({ physicsWorld }) {
   useFrame((state, delta) => {
@@ -13,10 +14,35 @@ function PhysicsSimulation({ physicsWorld }) {
   return null;
 }
 
-function PolaroidLine() {
-  const [isPhysicsReady, setPhysicsReady] = React.useState(false);
-  const physicsWorldRef = useRef(null);
+function LoadingScreen({ progress }) {
+  const theme = useTheme();
 
+  return (
+    <div
+      className={`fixed inset-0 ${
+        theme.background
+      } flex flex-col items-center justify-center z-50 transition-opacity duration-500 ${
+        progress === 100 ? "opacity-0 pointer-events-none" : "opacity-100"
+      }`}
+    >
+      <h1 className={`${theme.fontLeiko} ${theme.textPrimary} text-4xl mb-8`}>
+        Loading Experience
+      </h1>
+      <div className="w-64 h-2 bg-stone-200 rounded-full overflow-hidden">
+        <div
+          className={`h-full ${theme.textSecondary} bg-current transition-all duration-300 ease-out`}
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+      <p className={`${theme.textSecondary} mt-4`}>{Math.round(progress)}%</p>
+    </div>
+  );
+}
+
+function PolaroidLine() {
+  const [isPhysicsReady, setPhysicsReady] = useState(false);
+  const physicsWorldRef = useRef(null);
+  const totalProgress = useLoadingStore((state) => state.totalProgress);
   // Initialize Ammo.js and physics world
   useEffect(() => {
     let worldInstance = null; // Store world reference in closure
@@ -65,11 +91,16 @@ function PolaroidLine() {
     };
   }, []);
 
+  useEffect(() => {
+    console.log("totalProgress updated:", totalProgress);
+  }, [totalProgress]);
+
   // Define rope positions
   const ropePositions = useMemo(() => [4.5, 2, -0.5], []);
 
   return (
-    <div className="h-screen w-screen">
+    <div className="h-screen w-screen relative">
+      <LoadingScreen progress={totalProgress * 100} />
       <Scene devMode={false}>
         <PhysicsSimulation physicsWorld={physicsWorldRef.current} />
         {isPhysicsReady && physicsWorldRef.current && (
