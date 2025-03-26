@@ -27,6 +27,9 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
         texture.generateMipmaps = true;
         texture.center.set(0.5, 0.5);
         texture.rotation = Math.PI;
+        // Increase texture definition and sharpness
+        texture.anisotropy = Math.min(16, gl.capabilities.getMaxAnisotropy());
+        texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
       })
     : null;
 
@@ -72,7 +75,7 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
     // Clone the scene
     clonedSceneRef.current = gltf.scene.clone(true);
 
-    // Setup the new material
+    // Setup the new material with increased brightness and definition
     materialRef.current = new THREE.MeshStandardMaterial({
       map: texture,
       side: THREE.DoubleSide,

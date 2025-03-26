@@ -20,11 +20,10 @@ function Lighting({ spotlightMode = false }) {
         </>
       ) : (
         <>
-          <ambientLight intensity={1} />
+          <ambientLight intensity={0.5} />
           <directionalLight
             position={[5, 5, 5]}
-            intensity={1}
-            // castShadow
+            intensity={0.5}
             shadow-mapSize-width={2048}
             shadow-mapSize-height={2048}
           />
@@ -57,7 +56,6 @@ function Scene({ devMode = false, children }) {
       {...(!devMode && {
         gl: {
           pixelRatio: window.devicePixelRatio,
-          physicallyCorrectLights: true,
           shadowMap: {
             enabled: true,
             type: THREE.PCFSoftShadowMap,
@@ -76,7 +74,7 @@ function Scene({ devMode = false, children }) {
         dampingFactor={0.08}
         rotateSpeed={0.4}
         enableRotate={enableRotate}
-        enablePan={false}
+        enablePan={true}
         maxPolarAngle={(Math.PI * 5) / 6}
         minPolarAngle={Math.PI / 6}
         maxAzimuthAngle={Math.PI / 3}
@@ -86,29 +84,5 @@ function Scene({ devMode = false, children }) {
     </Canvas>
   );
 }
-
-// // Mouse tracking hook to replace the original mouse tracking functionality
-// export function useMouseTracking() {
-//   const mouseRef = useRef(new THREE.Vector2());
-//   const targetMouseRef = useRef(new THREE.Vector2());
-//   const lerpFactor = useRef(1);
-
-//   const updateMousePosition = React.useCallback((event) => {
-//     targetMouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-//     targetMouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
-//   }, []);
-
-//   useFrame(() => {
-//     mouseRef.current.x +=
-//       (targetMouseRef.current.x - mouseRef.current.x) * lerpFactor.current;
-//     mouseRef.current.y +=
-//       (targetMouseRef.current.y - mouseRef.current.y) * lerpFactor.current;
-//   });
-
-//   return {
-//     mouse: mouseRef.current,
-//     updateMousePosition,
-//   };
-// }
 
 export default Scene;
