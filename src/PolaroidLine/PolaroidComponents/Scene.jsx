@@ -57,7 +57,7 @@ function Scene({ devMode = false, children }) {
       {...(!devMode && {
         gl: {
           pixelRatio: window.devicePixelRatio,
-          physicallyCorrectLights: true,
+          // physicallyCorrectLights: true,
           shadowMap: {
             enabled: true,
             type: THREE.PCFSoftShadowMap,

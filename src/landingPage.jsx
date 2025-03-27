@@ -63,7 +63,7 @@ const LandingPage = () => {
       duration: 1.5,
       ease: "power2.inOut",
       onComplete: () => {
-        navigate("/polaroid");
+        navigate("/house");
       },
     });
   };

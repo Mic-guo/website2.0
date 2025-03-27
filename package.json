@@ -15,6 +15,7 @@
     "@react-three/fiber": "^8.17.14",
     "@splinetool/loader": "^1.9.81",
     "@splinetool/r3f-spline": "^1.0.2",
+    "@splinetool/runtime": "^1.9.81",
     "@tailwindcss/vite": "^4.0.12",
     "@types/three": "^0.173.0",
     "gsap": "^3.12.7",
@@ -22,10 +23,11 @@
     "lodash": "^4.17.21",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-error-boundary": "^5.0.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.4.0",
     "tailwindcss": "^4.0.12",
-    "three": "^0.173.0",
+    "three": "^0.152.2",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
