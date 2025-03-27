@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { MODEL_BASE_POSITION } from "../utils/constants";
+import { MODEL_BASE_POSITION } from "./utils/constants";
 
 export default function Snow() {
   // Create snow particles
