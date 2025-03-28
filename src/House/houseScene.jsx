@@ -9,22 +9,23 @@ import Desk from "./houseComponents/room/desk";
 import SpeakerLight from "./houseComponents/room/speakerLight";
 import Calendar from "./houseComponents/room/calendar";
 import Bookshelf from "./houseComponents/room/bookshelf";
-import { NightMode } from "./NighttimeScene";
-import { DayMode } from "./DaytimeScene";
-import Snow from "./Snow";
+import { NightMode } from "./sceneEffects/NighttimeScene";
+import { DayMode } from "./sceneEffects/DaytimeScene";
+import Snow from "./sceneEffects/Snow";
 
-export default function Scene({ ...props }) {
+export default function Scene({ isNightMode, ...props }) {
   const { nodes, materials } = useSpline(sceneFile);
 
   return (
     <>
-      {/* <DayMode /> */}
-      <NightMode />
-      {/* <color attach="background" args={["#030b1c"]} />
-      <ambientLight intensity={0.05} />
-      <directionalLight intensity={0.05} position={[-10, 30, 10]} /> */}
-
-      <Snow />
+      {isNightMode ? (
+        <NightMode />
+      ) : (
+        <>
+          <DayMode />
+          <Snow />
+        </>
+      )}
 
       <group {...props} dispose={null}>
         <scene name="Scene">

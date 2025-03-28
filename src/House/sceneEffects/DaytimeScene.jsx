@@ -16,9 +16,9 @@ const SunsetSky = () => {
 
     // Create gradient
     const gradient = context.createLinearGradient(0, 0, 0, size);
-    gradient.addColorStop(0.3, "#6A82FB"); // Light blue
-    gradient.addColorStop(0.5, "#FFCC70"); // Gold
-    gradient.addColorStop(0.7, "#FF9966"); // Light orange
+    // gradient.addColorStop(0.1, "#6A82FB"); // Light blue
+    gradient.addColorStop(0.3, "#d1a658"); // Gold
+    gradient.addColorStop(0.6, "#fa874d"); // Light orange
 
     // Apply gradient to canvas
     context.fillStyle = gradient;
@@ -56,7 +56,7 @@ const DayLighting = () => {
     <>
       <ambientLight intensity={0.2} color="#FFA07A" />
       <directionalLight
-        intensity={0.8}
+        intensity={0.4}
         position={[-10, 8, 10]}
         color="#FF7E5F"
         castShadow

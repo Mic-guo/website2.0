@@ -10,3 +10,8 @@ export const CAMERA_OFFSET = {
   y: 700,
   z: 3000,
 };
+
+export const CAMERA_ANIMATION_OFFSET = {
+  y: 1000, // How much higher the camera starts
+  z: -1000, // How much further back the camera starts
+};

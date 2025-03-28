@@ -1,16 +1,17 @@
 import { useState, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { MODEL_BASE_POSITION } from "./utils/constants";
+import { MODEL_BASE_POSITION } from "../utils/constants";
 
 export default function Snow() {
   // Create snow particles
   const [snowParticles] = useState(() => {
+    const NUM_PARTICLES = 200;
     const SPREAD_RANGE = 8000;
     const HEIGHT_RANGE = 2000;
     const ROOF_Y_POSITION = 3646.42;
     const BASE_Y_POSITION = MODEL_BASE_POSITION.y - 1009.82;
-    const particles = new Array(400).fill().map(() => ({
+    const particles = new Array(NUM_PARTICLES).fill().map(() => ({
       position: new THREE.Vector3(
         Math.random() * SPREAD_RANGE - SPREAD_RANGE / 2 + MODEL_BASE_POSITION.x,
         Math.random() * (HEIGHT_RANGE + ROOF_Y_POSITION) + BASE_Y_POSITION,

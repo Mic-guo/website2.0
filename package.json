@@ -18,6 +18,7 @@
     "@splinetool/runtime": "^1.9.81",
     "@tailwindcss/vite": "^4.0.12",
     "@types/three": "^0.173.0",
+    "cursor-dot": "^1.0.5",
     "gsap": "^3.12.7",
     "loadsh": "^0.0.4",
     "lodash": "^4.17.21",
