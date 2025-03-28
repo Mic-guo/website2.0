@@ -8,4 +8,9 @@ export default defineConfig({
   server: {
     port: 8000,
   },
+  optimizeDeps: {
+    include: ["three"],
+    exclude: ["@splinetool/r3f-spline"],
+  },
+  assetsInclude: ["**/*.splinecode"],
 });

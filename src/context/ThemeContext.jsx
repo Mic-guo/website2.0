@@ -5,6 +5,7 @@ const ThemeContext = createContext();
 export const ThemeProvider = ({ children }) => {
   const theme = {
     background: "bg-stone-50",
+    textLight: "text-stone-200",
     textPrimary: "text-stone-800",
     textSecondary: "text-amber-700",
     iconDefault: "text-stone-700",

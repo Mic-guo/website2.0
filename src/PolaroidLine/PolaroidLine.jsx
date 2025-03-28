@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useMemo, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import Scene from "./components/Scene";
-import RopeWithModels from "./components/RopeWithModels";
+import Scene from "./PolaroidComponents/Scene";
+import RopeWithModels from "./PolaroidComponents/RopeWithModels";
 import { useLoadingStore } from "./stores/loadingStore";
 import { useTheme } from "../context/ThemeContext";
 // This component handles the physics simulation within the Canvas context
