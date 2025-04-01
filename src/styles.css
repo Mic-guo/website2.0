@@ -7,7 +7,7 @@
 /* Leiko font variations */
 @font-face {
   font-family: "Leiko";
-  src: url("/fonts/leiko/Leiko-Regular.woff") format("woff");
+  src: url("../public/fonts/leiko/Leiko-Regular.woff") format("woff");
   font-weight: 400;
   font-style: normal;
 }
