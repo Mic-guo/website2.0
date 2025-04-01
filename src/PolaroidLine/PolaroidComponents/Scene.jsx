@@ -7,7 +7,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { NighttimeSky, Stars } from "../../House/sceneEffects/NighttimeScene";
 import { SunsetSky } from "../../House/sceneEffects/DaytimeScene";
 import useUIStore from "../../stores/UIStore";
-// Lighting component to replace the original lighting setup
+
 function Lighting({ spotlightMode = false }) {
   return (
     <>

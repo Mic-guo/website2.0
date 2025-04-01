@@ -47,9 +47,16 @@ function PolaroidLine() {
   const theme = useTheme();
   const [isPhysicsReady, setPhysicsReady] = useState(false);
   const physicsWorldRef = useRef(null);
-  const totalProgress = useLoadingStore((state) => state.totalProgress);
+  const { totalProgress, reset } = useLoadingStore();
   const { getCurrentState, popState } = useStateStore();
   const { isNightMode } = useUIStore();
+
+  // Reset loading progress on mount and unmount
+  useEffect(() => {
+    reset();
+    return () => reset();
+  }, [reset]);
+
   // Initialize Ammo.js and physics world
   useEffect(() => {
     let worldInstance = null; // Store world reference in closure

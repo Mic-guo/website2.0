@@ -10,6 +10,14 @@ import { Model } from "./Model";
 import { Rope } from "./Rope";
 import polaroidModel from "../models/polaroid_with_material.glb";
 
+// Generate image paths for all images (1-15)
+const images = Object.fromEntries(
+  Array.from({ length: 15 }, (_, i) => {
+    const num = i + 1;
+    return [num, `/images/IMG_${num}.jpeg`];
+  })
+);
+
 const RopeWithModels = memo(
   ({ physicsWorld, yOffset, ropeIndex, modelPerRope }) => {
     const ropeSegments = 120;
@@ -45,8 +53,8 @@ const RopeWithModels = memo(
         for (let i = 1; i < modelPerRope + 1; i++) {
           const imageIndex = ropeIndex * modelPerRope + i;
           const imagePath =
-            imageIndex <= 15
-              ? `/images/IMG_00${imageIndex.toString().padStart(2, "0")}.jpeg`
+            imageIndex <= Object.keys(images).length
+              ? images[imageIndex]
               : null;
 
           // Add small delay between model creations to ensure progress is updated

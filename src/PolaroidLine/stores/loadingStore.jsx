@@ -18,4 +18,10 @@ export const useLoadingStore = create((set) => ({
       };
     });
   },
+  reset: () => {
+    set({
+      totalProgress: 0,
+      loadedModels: 0,
+    });
+  },
 }));

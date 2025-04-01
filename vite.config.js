@@ -15,4 +15,5 @@ export default defineConfig({
     exclude: ["@splinetool/r3f-spline"],
   },
   assetsInclude: ["**/*.splinecode", "**/*.glb"],
+  publicDir: "public",
 });
