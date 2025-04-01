@@ -13,5 +13,4 @@ export default defineConfig({
     exclude: ["@splinetool/r3f-spline"],
   },
   assetsInclude: ["**/*.splinecode"],
-  base: "/website2.0/",
 });
