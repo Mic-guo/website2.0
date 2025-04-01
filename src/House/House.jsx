@@ -8,34 +8,16 @@ import {
   CAMERA_OFFSET,
   CAMERA_ANIMATION_OFFSET,
 } from "./utils/constants";
-import CameraController from "./controllers/cameraController";
+// import CameraController from "../controllers/cameraController";
+import { CameraZoomController } from "../controllers/cameraZoomController";
+import useStateStore from "../stores/stateStore";
+import useUIStore from "../stores/UIStore";
 
-// Create a separate component for the animated camera
-function AnimatedCamera({ cameraPosition }) {
-  const { camera } = useThree();
+export default function House() {
+  const { isZoomedIn } = useUIStore();
 
-  useEffect(() => {
-    gsap.to(camera.position, {
-      x: MODEL_BASE_POSITION.x + CAMERA_OFFSET.x,
-      y:
-        cameraPosition === "up"
-          ? MODEL_BASE_POSITION.y + CAMERA_OFFSET.y + CAMERA_ANIMATION_OFFSET.y
-          : MODEL_BASE_POSITION.y + CAMERA_OFFSET.y,
-      z:
-        cameraPosition === "up"
-          ? MODEL_BASE_POSITION.z + CAMERA_OFFSET.z + CAMERA_ANIMATION_OFFSET.z
-          : MODEL_BASE_POSITION.z + CAMERA_OFFSET.z,
-      duration: 3.5,
-      ease: "power2.inOut",
-    });
-  }, [cameraPosition, camera]);
-
-  return null;
-}
-
-export default function House({ isNightMode, cameraPosition }) {
   return (
-    <div className="w-screen h-screen overflow-hidden fixed">
+    <div className="w-screen h-screen overflow-hidden fixed cursor-none">
       <Canvas>
         <Suspense fallback={null}>
           <OrthographicCamera
@@ -53,7 +35,8 @@ export default function House({ isNightMode, cameraPosition }) {
             near={-10000}
             far={10000}
           />
-          <AnimatedCamera cameraPosition={cameraPosition} />
+          {/* <AnimatedCamera cameraPosition={cameraPosition} /> */}
+          <CameraZoomController />
           <OrbitControls
             enableZoom={false}
             enableRotate={true}
@@ -63,10 +46,12 @@ export default function House({ isNightMode, cameraPosition }) {
             target={[39.23, 2427.88, 306.66]}
             maxPolarAngle={Math.PI / 2} // 45 degrees from vertical, how high the cam can go
             minPolarAngle={Math.PI / 4} // 90 degrees from vertical, how low the cam can go
-            // maxAzimuthAngle={-(Math.PI / 2)} // 45 degrees from starting, limiting rotation to the right
-            // minAzimuthAngle={-(Math.PI / 4)} // 90 degrees from horizontal, limiting rotation to the left
+            maxAzimuthAngle={isZoomedIn ? Math.PI / 12 : Infinity}
+            minAzimuthAngle={
+              isZoomedIn ? -(Math.PI / 2 + Math.PI / 24) : -Infinity
+            }
           />
-          <Scene isNightMode={isNightMode} />
+          <Scene />
         </Suspense>
       </Canvas>
     </div>

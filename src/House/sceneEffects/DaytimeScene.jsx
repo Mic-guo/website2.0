@@ -3,7 +3,7 @@ import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 // Sunset sky with gradient
-const SunsetSky = () => {
+export const SunsetSky = () => {
   const { scene } = useThree();
 
   useEffect(() => {
@@ -16,9 +16,9 @@ const SunsetSky = () => {
 
     // Create gradient
     const gradient = context.createLinearGradient(0, 0, 0, size);
-    // gradient.addColorStop(0.1, "#6A82FB"); // Light blue
-    gradient.addColorStop(0.3, "#d1a658"); // Gold
-    gradient.addColorStop(0.6, "#fa874d"); // Light orange
+
+    gradient.addColorStop(0.3, "#d1a658");
+    gradient.addColorStop(0.6, "#fa874d");
 
     // Apply gradient to canvas
     context.fillStyle = gradient;

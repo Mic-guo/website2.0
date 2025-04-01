@@ -3,7 +3,7 @@ import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
 // Nighttime sky with stars
-const NighttimeSky = () => {
+export const NighttimeSky = () => {
   const { scene } = useThree();
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const NighttimeSky = () => {
 };
 
 // Stars component with twinkling effect
-const Stars = () => {
+export const Stars = () => {
   const starsRef = useRef();
   const starCount = 100;
 

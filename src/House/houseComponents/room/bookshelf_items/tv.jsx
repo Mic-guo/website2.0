@@ -1,6 +1,30 @@
-export default function Tv({ nodes, materials }) {
+import { forwardRef, useEffect } from "react";
+import useHoverStore from "../../../../stores/hoverStore";
+import gsap from "gsap";
+
+const Tv = forwardRef(function Tv({ nodes, materials }, ref) {
+  const { hoveredItem } = useHoverStore();
+  const isHovered = hoveredItem === "tv";
+
+  useEffect(() => {
+    if (ref.current) {
+      gsap.to(ref.current.scale, {
+        x: 1.31 * (isHovered ? 1.1 : 1),
+        y: 1.18 * (isHovered ? 1.1 : 1),
+        z: 1.31 * (isHovered ? 1.1 : 1),
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    }
+  }, [isHovered, ref]);
+
   return (
-    <group name="tv" position={[0, 159.25, 2.52]} scale={[1.31, 1.18, 1.31]}>
+    <group
+      ref={ref}
+      name="tv"
+      position={[0, 159.25, 2.52]}
+      scale={[1.31, 1.18, 1.31]}
+    >
       <mesh
         name="Text1"
         geometry={nodes.Text1.geometry}
@@ -126,4 +150,6 @@ export default function Tv({ nodes, materials }) {
       />
     </group>
   );
-}
+});
+
+export default Tv;

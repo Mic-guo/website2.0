@@ -1,19 +1,26 @@
-import { useEffect, useRef, forwardRef } from "react";
+// CursorManager.jsx with improved approach
+import { useEffect, useRef } from "react";
 import cursorDot from "cursor-dot";
 
 const CursorManager = ({ children }) => {
   const cursorRef = useRef(null);
 
   useEffect(() => {
-    // Add CSS to hide default cursor
-    document.body.style.cursor = "none";
+    // Create a style element instead of inline styles
+    const styleElement = document.createElement("style");
+    styleElement.innerHTML = `
+      * {
+        cursor: none !important;
+      }
+    `;
+    document.body.appendChild(styleElement);
 
     // Initialize cursor-dot
     const cursor = cursorDot({
-      diameter: 4,
+      diameter: 8,
       borderWidth: 1,
-      borderColor: "#b45309",
-      easing: 4,
+      borderColor: "#522706",
+      easing: 2,
     });
 
     cursorRef.current = cursor;
@@ -23,8 +30,7 @@ const CursorManager = ({ children }) => {
       if (cursorRef.current) {
         cursorRef.current.remove();
       }
-      // Reset cursor
-      document.body.style.cursor = "default";
+      document.body.removeChild(styleElement);
     };
   }, []);
 

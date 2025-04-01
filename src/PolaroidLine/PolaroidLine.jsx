@@ -4,6 +4,9 @@ import Scene from "./PolaroidComponents/Scene";
 import RopeWithModels from "./PolaroidComponents/RopeWithModels";
 import { useLoadingStore } from "./stores/loadingStore";
 import { useTheme } from "../context/ThemeContext";
+import useStateStore from "../stores/stateStore";
+import NightModeToggle from "../components/NightModeToggle";
+
 // This component handles the physics simulation within the Canvas context
 function PhysicsSimulation({ physicsWorld }) {
   useFrame((state, delta) => {
@@ -40,9 +43,11 @@ function LoadingScreen({ progress }) {
 }
 
 function PolaroidLine() {
+  const theme = useTheme();
   const [isPhysicsReady, setPhysicsReady] = useState(false);
   const physicsWorldRef = useRef(null);
   const totalProgress = useLoadingStore((state) => state.totalProgress);
+  const { getCurrentState, popState } = useStateStore();
   // Initialize Ammo.js and physics world
   useEffect(() => {
     let worldInstance = null; // Store world reference in closure
@@ -98,9 +103,37 @@ function PolaroidLine() {
   // Define rope positions
   const ropePositions = useMemo(() => [4.5, 2, -0.5], []);
 
+  const handleBack = () => {
+    const currentState = getCurrentState();
+    if (currentState === "polaroid") {
+      popState();
+      // Add your navigation logic here
+    }
+  };
+
   return (
-    <div className="h-screen w-screen relative">
+    <div className={`h-screen w-screen relative ${theme.background}`}>
       <LoadingScreen progress={totalProgress * 100} />
+
+      {/* Back Button */}
+      <button
+        onClick={handleBack}
+        className={`
+          absolute top-5 left-5
+          p-3 rounded-full border-none
+          bg-white/40 hover:bg-white/60 cursor-none
+          z-[1000] backdrop-blur-sm
+          flex items-center justify-center
+          w-12 h-12 shadow-md
+          ${isNightMode ? "text-[#fed77b]" : "text-[#6a5f4b]"}
+        `}
+      >
+        ←
+      </button>
+
+      {/* Night Mode Toggle */}
+      <NightModeToggle />
+
       <Scene devMode={false}>
         <PhysicsSimulation physicsWorld={physicsWorldRef.current} />
         {isPhysicsReady && physicsWorldRef.current && (

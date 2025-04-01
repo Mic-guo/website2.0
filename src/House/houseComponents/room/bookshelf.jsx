@@ -5,15 +5,19 @@ import Camera from "./bookshelf_items/camera";
 import Pig from "./bookshelf_items/pig";
 import Totoro from "./bookshelf_items/totoro";
 import Polaroid from "./bookshelf_items/polaroid";
+import { useRef } from "react";
 
 export default function Bookshelf({ nodes, materials }) {
+  const tvRef = useRef();
+  const polaroidRef = useRef();
+
   return (
     <group
       name="bookshelf_open"
       position={[-49.14, -245.2, -350.42]}
       scale={[0.81, 0.87, 0.81]}
     >
-      <Tv nodes={nodes} materials={materials} />
+      <Tv ref={tvRef} nodes={nodes} materials={materials} />
       <group
         name="Items"
         position={[18.85, 290.97, 35.36]}
@@ -23,7 +27,7 @@ export default function Bookshelf({ nodes, materials }) {
         <Camera nodes={nodes} materials={materials} />
         <Pig nodes={nodes} materials={materials} />
         <Totoro nodes={nodes} materials={materials} />
-        <Polaroid nodes={nodes} materials={materials} />
+        <Polaroid ref={polaroidRef} nodes={nodes} materials={materials} />
         <group
           name="Clock Digital"
           position={[140.3, -230.03, -31.21]}

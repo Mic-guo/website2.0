@@ -4,7 +4,9 @@ import { OrbitControls, SpotLight } from "@react-three/drei";
 import * as THREE from "three";
 import { useControlsStore } from "../stores/controlsStore";
 import { useTheme } from "../../context/ThemeContext";
-
+import { NighttimeSky, Stars } from "../../House/sceneEffects/NighttimeScene";
+import { SunsetSky } from "../../House/sceneEffects/DaytimeScene";
+import useUIStore from "../../stores/UIStore";
 // Lighting component to replace the original lighting setup
 function Lighting({ spotlightMode = false }) {
   return (
@@ -49,6 +51,7 @@ function CameraSetup() {
 function Scene({ devMode = false, children }) {
   const { setControlsRef, enableRotate } = useControlsStore();
   const theme = useTheme();
+  const { isNightMode } = useUIStore();
 
   return (
     <Canvas
@@ -69,6 +72,14 @@ function Scene({ devMode = false, children }) {
       })}
     >
       <CameraSetup />
+      {isNightMode ? (
+        <>
+          <NighttimeSky />
+          <Stars />
+        </>
+      ) : (
+        <SunsetSky />
+      )}
       <Lighting />
       <OrbitControls
         ref={setControlsRef}
@@ -76,7 +87,7 @@ function Scene({ devMode = false, children }) {
         dampingFactor={0.08}
         rotateSpeed={0.4}
         enableRotate={enableRotate}
-        enablePan={false}
+        // enablePan={false}
         maxPolarAngle={(Math.PI * 5) / 6}
         minPolarAngle={Math.PI / 6}
         maxAzimuthAngle={Math.PI / 3}

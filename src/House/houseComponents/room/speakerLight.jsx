@@ -60,7 +60,7 @@ export default function SpeakerLight({ nodes, materials }) {
         <pointLight
           name="Point Light"
           castShadow
-          intensity={0.25}
+          intensity={0.10}
           decay={6}
           distance={4574}
           shadow-mapSize-width={1024}

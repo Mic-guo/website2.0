@@ -9,10 +9,12 @@ import {
   WarmOffWhiteMaterial,
 } from "../utils/materials";
 import ChimneySmoke from "./ChimneySmoke";
+import { forwardRef } from "react";
 
-export default function Roof({ nodes }) {
+const Roof = forwardRef(({ nodes }, ref) => {
   return (
     <group
+      ref={ref}
       name="Roof layer"
       position={[12.89, 3646.42, 355.83]}
       scale={[3.28, 3.28, 3.37]}
@@ -211,4 +213,6 @@ export default function Roof({ nodes }) {
       </group>
     </group>
   );
-}
+});
+
+export default Roof;

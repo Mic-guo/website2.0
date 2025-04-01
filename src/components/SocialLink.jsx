@@ -3,7 +3,7 @@ import { useTheme } from "../context/ThemeContext.jsx";
 import { FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { Fragment } from "react";
-
+import useUIStore from "../stores/UIStore";
 const socialLinks = [
   {
     href: "https://github.com/Mic-Guo",
@@ -23,8 +23,9 @@ const socialLinks = [
   },
 ];
 
-const SocialLink = ({ onClick, isNightMode }) => {
+const SocialLink = ({ onClick }) => {
   const theme = useTheme();
+  const { isNightMode } = useUIStore();
 
   return (
     <>
