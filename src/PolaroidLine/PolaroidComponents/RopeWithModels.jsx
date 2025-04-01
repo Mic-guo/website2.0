@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { Model } from "./Model";
 import { Rope } from "./Rope";
+import polaroidModel from "../models/polaroid_with_material.glb";
 
 const RopeWithModels = memo(
   ({ physicsWorld, yOffset, ropeIndex, modelPerRope }) => {
@@ -54,7 +55,7 @@ const RopeWithModels = memo(
           modelArray.push(
             <Model
               key={`model-${ropeIndex}-${i}`}
-              path="/src/PolaroidLine/models/polaroid_with_material.glb"
+              path={polaroidModel}
               texturePath={imagePath}
               rope={ropeState.ref}
               positionOnRope={i * modelOnRopeOffset - modelOnRopeOffset / 2}
