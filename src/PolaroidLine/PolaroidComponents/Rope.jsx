@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
+import whiteStringTexture from "../textures/white_string.jpg";
 
 export function Rope({
   physicsWorld,
@@ -16,7 +17,7 @@ export function Rope({
   const allModels = useRef(new Map());
 
   // Load rope texture using drei's useTexture
-  const ropeTexture = useTexture("src/PolaroidLine/textures/white_string.jpg");
+  const ropeTexture = useTexture(whiteStringTexture);
   useEffect(() => {
     ropeTexture.wrapS = THREE.RepeatWrapping;
     ropeTexture.wrapT = THREE.RepeatWrapping;
