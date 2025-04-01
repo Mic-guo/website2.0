@@ -6,6 +6,7 @@ import { useLoadingStore } from "./stores/loadingStore";
 import { useTheme } from "../context/ThemeContext";
 import useStateStore from "../stores/stateStore";
 import NightModeToggle from "../components/NightModeToggle";
+import useUIStore from "../stores/UIStore";
 
 // This component handles the physics simulation within the Canvas context
 function PhysicsSimulation({ physicsWorld }) {
@@ -48,6 +49,7 @@ function PolaroidLine() {
   const physicsWorldRef = useRef(null);
   const totalProgress = useLoadingStore((state) => state.totalProgress);
   const { getCurrentState, popState } = useStateStore();
+  const { isNightMode } = useUIStore();
   // Initialize Ammo.js and physics world
   useEffect(() => {
     let worldInstance = null; // Store world reference in closure
