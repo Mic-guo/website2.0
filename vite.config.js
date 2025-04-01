@@ -14,5 +14,5 @@ export default defineConfig({
     include: ["three"],
     exclude: ["@splinetool/r3f-spline"],
   },
-  assetsInclude: ["**/*.splinecode"],
+  assetsInclude: ["**/*.splinecode", "**/*.glb"],
 });
