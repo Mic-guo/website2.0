@@ -47,15 +47,9 @@ function PolaroidLine() {
   const theme = useTheme();
   const [isPhysicsReady, setPhysicsReady] = useState(false);
   const physicsWorldRef = useRef(null);
-  const { totalProgress, reset } = useLoadingStore();
-  const { getCurrentState, popState } = useStateStore();
+  const { totalProgress } = useLoadingStore();
+  const { currentState, popState } = useStateStore();
   const { isNightMode } = useUIStore();
-
-  // Reset loading progress on mount and unmount
-  useEffect(() => {
-    reset();
-    return () => reset();
-  }, [reset]);
 
   // Initialize Ammo.js and physics world
   useEffect(() => {
@@ -113,7 +107,7 @@ function PolaroidLine() {
   const ropePositions = useMemo(() => [4.5, 2, -0.5], []);
 
   const handleBack = () => {
-    const currentState = getCurrentState();
+    // const currentState = getCurrentState();
     if (currentState === "polaroid") {
       popState();
       // Add your navigation logic here

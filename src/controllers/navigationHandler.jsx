@@ -1,11 +1,115 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useStateStore from "../stores/stateStore";
+import useUIStore from "../stores/UIStore";
+import { gsap } from "gsap";
 
-export default function navigationHandler() {
-  const [currentState, setCurrentState] = useState(null);
-  const { getCurrentState, popState, pushState } = useStateStore();
+// Available states: "landing", "houseScene", "polaroid", "zoomed"
 
-  const handleNavigation = (state) => {
+export default function navigationHandler(getRefsForState) {
+  const { currentState, popState, pushState } = useStateStore();
+  const {
+    isLandingPageVisible,
+    setIsLandingPageVisible,
+    isNightMode,
+    setCameraPosition,
+    setIsCursorTextVisible,
+    setIsZoomedIn,
+  } = useUIStore();
+
+  const handleEnterNavigationState = (state) => {
+    const validStates = ["houseScene", "focusedView", "polaroid"];
+    if (!validStates.includes(state)) {
+      console.error(`Invalid state: ${state}`);
+      return;
+    }
+
     pushState(state);
+
+    switch (state) {
+      case "houseScene":
+        enterHouseScene();
+        break;
+      case "focusedView":
+        setIsZoomedIn(true);
+        break;
+      case "polaroid":
+        break;
+    }
+
+    console.log(`Entering state: ${state} from ${currentState}`);
+  };
+
+  const handleExitNavigationState = () => {
+    const prevState = currentState;
+    popState();
+
+    switch (prevState) {
+      case "houseScene":
+        exitHouseScene();
+        break;
+      case "focusedView":
+        setIsZoomedIn(false);
+        break;
+      case "polaroid":
+        exitPolaroid();
+        break;
+    }
+
+    console.log(`Exiting state: ${prevState}`);
+  };
+
+  const enterHouseScene = () => {
+    const { houseWrapperRef, contentRef } = getRefsForState("houseScene");
+    setIsCursorTextVisible(false);
+    setCameraPosition("down");
+
+    gsap.to(contentRef.current, {
+      scale: 10,
+      opacity: 0,
+      duration: 1.5,
+      ease: "power2.inOut",
+      onComplete: () => {
+        setIsLandingPageVisible(false);
+        gsap.to(houseWrapperRef.current, {
+          filter: "blur(0px)",
+          duration: 0.5,
+        });
+      },
+    });
+  };
+
+  const exitHouseScene = () => {
+    const { houseWrapperRef, contentRef } = getRefsForState("houseScene");
+    setCameraPosition("up");
+    setIsCursorTextVisible(true);
+    setIsLandingPageVisible(true);
+    requestAnimationFrame(() => {
+      gsap.to(houseWrapperRef.current, {
+        filter: "blur(40px)",
+        duration: 0.5,
+      });
+
+      gsap.fromTo(
+        contentRef.current,
+        { scale: 10, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 1.5, ease: "power2.inOut" }
+      );
+    });
+  };
+
+  const enterPolaroid = () => {
+    // TODO
+  };
+
+  const exitPolaroid = () => {
+    // TODO
+  };
+
+  // If there is no previous state, set the current state to the first state? or maybe set to the zoomed in house state
+  // For example, reloading on /polaroid/ would have no previous state i think
+
+  return {
+    handleEnterNavigationState,
+    handleExitNavigationState,
   };
 }

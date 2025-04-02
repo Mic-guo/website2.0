@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { gsap } from "gsap";
 import { TextPlugin } from "gsap/TextPlugin";
 import { useTheme } from "./context/ThemeContext";
@@ -9,6 +9,7 @@ import House from "./House/House";
 import useStateStore from "./stores/stateStore";
 import NightModeToggle from "./components/NightModeToggle";
 import useUIStore from "./stores/UIStore";
+import useNavigationHandler from "./controllers/navigationHandler";
 
 gsap.registerPlugin(TextPlugin);
 
@@ -68,66 +69,23 @@ const LandingPage = () => {
   const contentRef = useRef(null);
   const houseWrapperRef = useRef(null);
 
-  const {
-    isLandingPageVisible,
-    setIsLandingPageVisible,
-    isNightMode,
-    setCameraPosition,
-    setIsCursorTextVisible,
-    setIsZoomedIn,
-  } = useUIStore();
+  const getRefsForState = useCallback((state) => {
+    switch (state) {
+      case "houseScene":
+        return {
+          contentRef,
+          houseWrapperRef,
+        };
+      default:
+        return {};
+    }
+  }, []);
 
-  const { getCurrentState, popState, pushState } = useStateStore();
+  const { isLandingPageVisible, isNightMode } = useUIStore();
+  const { handleEnterNavigationState, handleExitNavigationState } =
+    useNavigationHandler(getRefsForState);
 
   useTextAnimation(textRef, cursorRef, isLandingPageVisible);
-
-  const handleEnterScene = () => {
-    setIsCursorTextVisible(false);
-    setCameraPosition("down");
-
-    gsap.to(contentRef.current, {
-      scale: 10,
-      opacity: 0,
-      duration: 1.5,
-      ease: "power2.inOut",
-      onComplete: () => {
-        pushState("scene");
-        setIsLandingPageVisible(false);
-        gsap.to(houseWrapperRef.current, {
-          filter: "blur(0px)",
-          duration: 0.5,
-        });
-      },
-    });
-  };
-
-  const handleBack = () => {
-    const currentState = getCurrentState();
-
-    if (currentState === "zoomed") {
-      // Just handle zoom state in Scene component
-      popState();
-      setIsZoomedIn(false);
-    } else if (currentState === "scene") {
-      // Reset to landing page
-      popState();
-      setCameraPosition("up");
-      setIsCursorTextVisible(true);
-      setIsLandingPageVisible(true);
-      requestAnimationFrame(() => {
-        gsap.to(houseWrapperRef.current, {
-          filter: "blur(40px)",
-          duration: 0.5,
-        });
-
-        gsap.fromTo(
-          contentRef.current,
-          { scale: 10, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 1.5, ease: "power2.inOut" }
-        );
-      });
-    }
-  };
 
   return (
     <>
@@ -136,7 +94,7 @@ const LandingPage = () => {
       </div>
       {!isLandingPageVisible && (
         <button
-          onClick={handleBack}
+          onClick={handleExitNavigationState}
           className={`
               absolute top-5 left-5
               p-3 rounded-full border-none
@@ -154,7 +112,7 @@ const LandingPage = () => {
       {isLandingPageVisible && (
         <div
           className={`h-screen w-screen flex justify-center items-center bg-transparent flex-col fixed overflow-hidden cursor-none main-clickable-area`}
-          onClick={handleEnterScene}
+          onClick={() => handleEnterNavigationState("houseScene")}
         >
           {/* Main content */}
           <div ref={contentRef} className="flex flex-col items-center">

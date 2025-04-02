@@ -17,6 +17,7 @@ import gsap from "gsap";
 import { CameraZoomController } from "../controllers/cameraZoomController";
 import useStateStore from "../stores/stateStore";
 import useUIStore from "../stores/UIStore";
+import useNavigationHandler from "../controllers/navigationHandler";
 
 export default function Scene({ ...props }) {
   const { nodes, materials } = useSpline(sceneFile);
@@ -26,9 +27,9 @@ export default function Scene({ ...props }) {
   const scaleRef = useRef(1);
   const roofRef = useRef();
 
-  const { pushState } = useStateStore();
   const { setHoveredItem, clearHover, hoveredItem } = useHoverStore();
-  const { isNightMode, setIsZoomedIn, isZoomedIn } = useUIStore();
+  const { isNightMode, isZoomedIn } = useUIStore();
+  const { handleEnterNavigationState } = useNavigationHandler();
 
   // Set up raycaster
   const raycaster = new THREE.Raycaster();
@@ -154,11 +155,7 @@ export default function Scene({ ...props }) {
           if (isZoomedIn) return;
 
           e.stopPropagation();
-          const newZoomState = !isZoomedIn;
-          setIsZoomedIn(newZoomState);
-          if (newZoomState) {
-            pushState("zoomed");
-          }
+          handleEnterNavigationState("focusedView");
         }}
       >
         <scene name="Scene">

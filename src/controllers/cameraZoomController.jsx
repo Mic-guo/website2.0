@@ -8,9 +8,11 @@ import {
 } from "../House/utils/constants";
 import useUIStore from "../stores/UIStore";
 
+// THERE IS AN ANIMATION AT THE BEGINNING OF THE LANDING PAGE FOR SOME REASON 
+
 export function CameraZoomController() {
   const { camera } = useThree();
-  const { isZoomedIn, cameraPosition } = useUIStore();
+  const { isZoomedIn, cameraPosition } = useUIStore(); // Camera position should be instead offsets not a string for best practices
 
   useEffect(() => {
     const targetY =

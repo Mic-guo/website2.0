@@ -6,6 +6,7 @@ const useUIStore = create((set) => ({
   isLandingPageVisible: true,
   isZoomedIn: false,
   cameraPosition: "up",
+  isTransitioning: false,
 
   setIsNightMode: (isNightMode) => set({ isNightMode }),
   setIsCursorTextVisible: (isCursorTextVisible) => set({ isCursorTextVisible }),
@@ -13,6 +14,7 @@ const useUIStore = create((set) => ({
     set({ isLandingPageVisible }),
   setCameraPosition: (cameraPosition) => set({ cameraPosition }),
   setIsZoomedIn: (isZoomedIn) => set({ isZoomedIn }),
+  setIsTransitioning: (isTransitioning) => set({ isTransitioning }),
 }));
 
 export default useUIStore;
