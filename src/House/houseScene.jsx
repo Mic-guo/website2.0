@@ -1,8 +1,8 @@
 import useSpline from "@splinetool/r3f-spline";
-import { Canvas, useThree, useFrame } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
-import sceneFile from "./utils/scene.splinecode?url";
+import sceneFile from "../House/scene.splinecode?url";
 import Roof from "./houseComponents/roof";
 import SidesBase from "./houseComponents/sides+base";
 import Desk from "./houseComponents/room/desk";
@@ -14,8 +14,7 @@ import { DayMode } from "./sceneEffects/DaytimeScene";
 import Snow from "./sceneEffects/Snow";
 import useHoverStore from "../stores/hoverStore";
 import gsap from "gsap";
-import { CameraZoomController } from "../controllers/cameraZoomController";
-import useStateStore from "../stores/stateStore";
+import { CameraZoomController } from "../controllers/CameraZoomController";
 import useUIStore from "../stores/UIStore";
 import useNavigationHandler from "../controllers/navigationHandler";
 
@@ -126,7 +125,7 @@ export default function Scene({ ...props }) {
         material.transparent = true;
         gsap.to(material, {
           opacity: isZoomedIn ? 0 : 1,
-          duration: 2.5,
+          duration: 1.5,
           ease: "power2.inOut",
         });
       });

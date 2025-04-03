@@ -5,16 +5,16 @@ const useUIStore = create((set) => ({
   isCursorTextVisible: true,
   isLandingPageVisible: true,
   isZoomedIn: false,
-  cameraPosition: "up",
-  isTransitioning: false,
+  cameraAnimation: null,
+  fromPolaroid: false,
 
   setIsNightMode: (isNightMode) => set({ isNightMode }),
   setIsCursorTextVisible: (isCursorTextVisible) => set({ isCursorTextVisible }),
   setIsLandingPageVisible: (isLandingPageVisible) =>
     set({ isLandingPageVisible }),
-  setCameraPosition: (cameraPosition) => set({ cameraPosition }),
+  setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
   setIsZoomedIn: (isZoomedIn) => set({ isZoomedIn }),
-  setIsTransitioning: (isTransitioning) => set({ isTransitioning }),
+  setFromPolaroid: (fromPolaroid) => set({ fromPolaroid }),
 }));
 
 export default useUIStore;

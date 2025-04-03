@@ -23,6 +23,7 @@ const CursorText = () => {
       textElement.style.opacity = "0";
       textElement.style.whiteSpace = "nowrap";
       textElement.style.transition = "opacity 0.3s ease";
+      textElement.style.lineHeight = "1";
       textElement.style.left = "0";
       textElement.style.top = "0";
 
@@ -51,8 +52,8 @@ const CursorText = () => {
       const animate = () => {
         if (textElementRef.current) {
           const easing = 4;
-          const targetX = mousePositionRef.current.x + 15;
-          const targetY = mousePositionRef.current.y;
+          const targetX = mousePositionRef.current.x + 25;
+          const targetY = mousePositionRef.current.y - 7;
 
           // Apply easing
           textPositionRef.current.x +=

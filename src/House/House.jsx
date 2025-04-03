@@ -1,16 +1,14 @@
-import { Canvas, useThree, useFrame } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import { OrthographicCamera, OrbitControls } from "@react-three/drei";
-import { Suspense, useEffect, useRef } from "react";
-import { gsap } from "gsap";
+import { Suspense } from "react";
 import Scene from "./houseScene";
 import {
   MODEL_BASE_POSITION,
   CAMERA_OFFSET,
   CAMERA_ANIMATION_OFFSET,
-} from "./utils/constants";
+} from "../utils/constants";
 // import CameraController from "../controllers/cameraController";
-import { CameraZoomController } from "../controllers/cameraZoomController";
-import useStateStore from "../stores/stateStore";
+import { CameraZoomController } from "../controllers/CameraZoomController";
 import useUIStore from "../stores/UIStore";
 
 export default function House() {
@@ -35,7 +33,6 @@ export default function House() {
             near={-10000}
             far={10000}
           />
-          {/* <AnimatedCamera cameraPosition={cameraPosition} /> */}
           <CameraZoomController />
           <OrbitControls
             enableZoom={false}

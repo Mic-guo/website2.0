@@ -7,6 +7,7 @@ import { useTheme } from "../context/ThemeContext";
 import useStateStore from "../stores/stateStore";
 import NightModeToggle from "../components/NightModeToggle";
 import useUIStore from "../stores/UIStore";
+import useNavigationHandler from "../controllers/navigationHandler";
 
 // This component handles the physics simulation within the Canvas context
 function PhysicsSimulation({ physicsWorld }) {
@@ -48,7 +49,8 @@ function PolaroidLine() {
   const [isPhysicsReady, setPhysicsReady] = useState(false);
   const physicsWorldRef = useRef(null);
   const { totalProgress } = useLoadingStore();
-  const { currentState, popState } = useStateStore();
+  const { currentState, pushState } = useStateStore();
+  const { handleExitNavigationState } = useNavigationHandler();
   const { isNightMode } = useUIStore();
 
   // Initialize Ammo.js and physics world
@@ -103,16 +105,17 @@ function PolaroidLine() {
     console.log("totalProgress updated:", totalProgress);
   }, [totalProgress]);
 
+  // Handle reload on /polaroid page with no previous navigation state
+  useEffect(() => {
+    if (currentState !== "polaroid") {
+      pushState("polaroid");
+    } else {
+      console.log("currentState is polaroid");
+    }
+  }, []);
+
   // Define rope positions
   const ropePositions = useMemo(() => [4.5, 2, -0.5], []);
-
-  const handleBack = () => {
-    // const currentState = getCurrentState();
-    if (currentState === "polaroid") {
-      popState();
-      // Add your navigation logic here
-    }
-  };
 
   return (
     <div className={`h-screen w-screen relative ${theme.background}`}>
@@ -120,7 +123,7 @@ function PolaroidLine() {
 
       {/* Back Button */}
       <button
-        onClick={handleBack}
+        onClick={handleExitNavigationState}
         className={`
           absolute top-5 left-5
           p-3 rounded-full border-none

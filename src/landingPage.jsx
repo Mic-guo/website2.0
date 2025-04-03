@@ -81,7 +81,7 @@ const LandingPage = () => {
     }
   }, []);
 
-  const { isLandingPageVisible, isNightMode } = useUIStore();
+  const { isLandingPageVisible, isNightMode, fromPolaroid } = useUIStore();
   const { handleEnterNavigationState, handleExitNavigationState } =
     useNavigationHandler(getRefsForState);
 
@@ -89,7 +89,12 @@ const LandingPage = () => {
 
   return (
     <>
-      <div ref={houseWrapperRef} className="fixed filter blur-2xl cursor-none">
+      <div
+        ref={houseWrapperRef}
+        className={`fixed filter ${
+          fromPolaroid ? "blur-0" : "blur-2xl"
+        } cursor-none`}
+      >
         <House />
       </div>
       {!isLandingPageVisible && (

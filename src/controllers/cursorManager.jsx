@@ -17,9 +17,9 @@ const CursorManager = ({ children }) => {
 
     // Initialize cursor-dot
     const cursor = cursorDot({
-      diameter: 8,
-      borderWidth: 1,
-      borderColor: "#522706",
+      diameter: 40,
+      borderWidth: 2,
+      borderColor: "rgba(255, 255, 255, 0.8)",
       easing: 2,
     });
 

@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import useStateStore from "../stores/stateStore";
 import useUIStore from "../stores/UIStore";
 import { gsap } from "gsap";
-
+import { CameraPositions } from "../utils/constants";
+import { useNavigate } from "react-router-dom";
 // Available states: "landing", "houseScene", "polaroid", "zoomed"
 
 export default function navigationHandler(getRefsForState) {
@@ -11,10 +12,12 @@ export default function navigationHandler(getRefsForState) {
     isLandingPageVisible,
     setIsLandingPageVisible,
     isNightMode,
-    setCameraPosition,
+    setCameraAnimation,
     setIsCursorTextVisible,
     setIsZoomedIn,
+    setFromPolaroid,
   } = useUIStore();
+  const navigate = useNavigate();
 
   const handleEnterNavigationState = (state) => {
     const validStates = ["houseScene", "focusedView", "polaroid"];
@@ -33,6 +36,7 @@ export default function navigationHandler(getRefsForState) {
         setIsZoomedIn(true);
         break;
       case "polaroid":
+        enterPolaroid();
         break;
     }
 
@@ -48,6 +52,7 @@ export default function navigationHandler(getRefsForState) {
         exitHouseScene();
         break;
       case "focusedView":
+        setCameraAnimation(CameraPositions.FOCUSED_VIEW);
         setIsZoomedIn(false);
         break;
       case "polaroid":
@@ -61,7 +66,7 @@ export default function navigationHandler(getRefsForState) {
   const enterHouseScene = () => {
     const { houseWrapperRef, contentRef } = getRefsForState("houseScene");
     setIsCursorTextVisible(false);
-    setCameraPosition("down");
+    setCameraAnimation(CameraPositions.HOUSE_SCENE);
 
     gsap.to(contentRef.current, {
       scale: 10,
@@ -80,7 +85,8 @@ export default function navigationHandler(getRefsForState) {
 
   const exitHouseScene = () => {
     const { houseWrapperRef, contentRef } = getRefsForState("houseScene");
-    setCameraPosition("up");
+    setFromPolaroid(false);
+    setCameraAnimation(CameraPositions.LANDING_PAGE);
     setIsCursorTextVisible(true);
     setIsLandingPageVisible(true);
     requestAnimationFrame(() => {
@@ -98,11 +104,12 @@ export default function navigationHandler(getRefsForState) {
   };
 
   const enterPolaroid = () => {
-    // TODO
+    navigate("/polaroid");
   };
 
   const exitPolaroid = () => {
-    // TODO
+    setFromPolaroid(true);
+    navigate("/");
   };
 
   // If there is no previous state, set the current state to the first state? or maybe set to the zoomed in house state

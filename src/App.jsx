@@ -2,7 +2,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import PolaroidLine from "./PolaroidLine/PolaroidLine";
 import LandingPage from "./landingPage";
-import CursorManager from "./controllers/cursorManager";
+import CursorManager from "./controllers/CursorManager";
 export default function App() {
   return (
     <CursorManager>

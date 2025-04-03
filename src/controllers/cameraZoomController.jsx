@@ -5,45 +5,88 @@ import {
   MODEL_BASE_POSITION,
   CAMERA_OFFSET,
   CAMERA_ANIMATION_OFFSET,
-} from "../House/utils/constants";
+  CameraPositions,
+} from "../utils/constants";
 import useUIStore from "../stores/UIStore";
-
-// THERE IS AN ANIMATION AT THE BEGINNING OF THE LANDING PAGE FOR SOME REASON 
 
 export function CameraZoomController() {
   const { camera } = useThree();
-  const { isZoomedIn, cameraPosition } = useUIStore(); // Camera position should be instead offsets not a string for best practices
+  const { isZoomedIn, cameraAnimation, fromPolaroid } = useUIStore();
 
   useEffect(() => {
-    const targetY =
-      cameraPosition === "up"
-        ? MODEL_BASE_POSITION.y + CAMERA_OFFSET.y + CAMERA_ANIMATION_OFFSET.y
-        : MODEL_BASE_POSITION.y + CAMERA_OFFSET.y;
+    if (cameraAnimation === null) return;
 
-    const targetZ =
-      cameraPosition === "up"
-        ? MODEL_BASE_POSITION.z + CAMERA_OFFSET.z + CAMERA_ANIMATION_OFFSET.z
-        : MODEL_BASE_POSITION.z + CAMERA_OFFSET.z;
+    let targetY = MODEL_BASE_POSITION.y + CAMERA_OFFSET.y;
+    let targetZ = MODEL_BASE_POSITION.z + CAMERA_OFFSET.z;
+    let targetX = MODEL_BASE_POSITION.x + CAMERA_OFFSET.x;
 
-    gsap.to(camera.position, {
-      x: MODEL_BASE_POSITION.x + CAMERA_OFFSET.x,
-      y: targetY,
-      z: targetZ,
-      duration: 4,
-      ease: "power2.inOut",
-    });
-
-    if (isZoomedIn !== undefined) {
-      gsap.to(camera, {
-        zoom: isZoomedIn ? 0.3 : 0.1,
-        duration: 1.5,
-        ease: "power2.inOut",
-        onUpdate: () => {
-          camera.updateProjectionMatrix();
-        },
-      });
+    switch (cameraAnimation) {
+      case CameraPositions.LANDING_PAGE:
+        gsap.to(camera.position, {
+          x: targetX,
+          y: targetY + CAMERA_ANIMATION_OFFSET.y,
+          z: targetZ + CAMERA_ANIMATION_OFFSET.z,
+          duration: 4,
+          ease: "power2.inOut",
+        });
+        break;
+      case CameraPositions.HOUSE_SCENE:
+        gsap.to(camera.position, {
+          x: targetX,
+          y: targetY,
+          z: targetZ,
+          duration: 4,
+          ease: "power2.inOut",
+        });
+        break;
+      case CameraPositions.FOCUSED_VIEW:
+        gsap.to(camera.position, {
+          x: targetX,
+          y: targetY,
+          z: targetZ,
+          duration: 1,
+          ease: "power2.inOut",
+        });
+        break;
+      default:
+        break;
     }
-  }, [isZoomedIn, cameraPosition, camera]);
+
+    // Calculate zoom based on screen size
+    const baseZoom = isZoomedIn ? 0.4 : 0.1;
+    const aspectRatio = window.innerWidth / window.innerHeight;
+    const referenceWidth = 1920; // Reference width for base zoom
+    const scaleFactorWidth = window.innerWidth / referenceWidth;
+
+    // Scale zoom based on screen width, but with some constraints
+    const scaledZoom =
+      baseZoom * Math.min(Math.max(scaleFactorWidth, 0.7), 1.4);
+
+    gsap.to(camera, {
+      zoom: scaledZoom,
+      duration: 1.5,
+      ease: "power2.inOut",
+      onUpdate: () => {
+        camera.updateProjectionMatrix();
+      },
+    });
+  }, [isZoomedIn, cameraAnimation, camera]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const baseZoom = isZoomedIn ? 0.4 : 0.1;
+      const referenceWidth = 1920;
+      const scaleFactorWidth = window.innerWidth / referenceWidth;
+      const scaledZoom =
+        baseZoom * Math.min(Math.max(scaleFactorWidth, 0.7), 1.3);
+
+      camera.zoom = scaledZoom;
+      camera.updateProjectionMatrix();
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [camera, isZoomedIn]);
 
   return null;
 }

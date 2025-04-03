@@ -2,10 +2,12 @@ import { forwardRef, useEffect } from "react";
 import useHoverStore from "../../../../stores/hoverStore";
 import gsap from "gsap";
 import { useNavigate } from "react-router-dom";
+import useNavigationHandler from "../../../../controllers/navigationHandler";
 
 const Polaroid = forwardRef(function Polaroid({ nodes, materials }, ref) {
   const navigate = useNavigate();
   const { hoveredItem } = useHoverStore();
+  const { handleEnterNavigationState } = useNavigationHandler();
   const isHovered = hoveredItem === "polaroid";
 
   useEffect(() => {
@@ -30,8 +32,7 @@ const Polaroid = forwardRef(function Polaroid({ nodes, materials }, ref) {
         scale={0.07}
         onClick={(e) => {
           e.stopPropagation();
-          console.log("clicked");
-          navigate("/polaroid");
+          handleEnterNavigationState("polaroid");
         }}
       >
         <group

@@ -7,7 +7,7 @@ import {
   RoofTerracottaMaterial,
   SnowWhiteMaterial,
   WarmOffWhiteMaterial,
-} from "../utils/materials";
+} from "./materials";
 import ChimneySmoke from "./ChimneySmoke";
 import { forwardRef } from "react";
 

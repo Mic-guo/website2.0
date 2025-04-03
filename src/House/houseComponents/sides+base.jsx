@@ -1,4 +1,4 @@
-import { OffWhiteWallMaterial, WarmOffWhiteMaterial } from "../utils/materials";
+import { OffWhiteWallMaterial, WarmOffWhiteMaterial } from "./materials";
 
 export default function SidesBase({ nodes }) {
   return (
