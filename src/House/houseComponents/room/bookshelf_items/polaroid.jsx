@@ -2,7 +2,7 @@ import { forwardRef, useEffect } from "react";
 import useHoverStore from "../../../../stores/hoverStore";
 import gsap from "gsap";
 import { useNavigate } from "react-router-dom";
-import useNavigationHandler from "../../../../controllers/navigationHandler";
+import useNavigationHandler from "../../../../components/controllers/navigationHandler";
 
 const Polaroid = forwardRef(function Polaroid({ nodes, materials }, ref) {
   const navigate = useNavigate();

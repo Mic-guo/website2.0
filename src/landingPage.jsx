@@ -9,7 +9,7 @@ import House from "./House/House";
 import useStateStore from "./stores/stateStore";
 import NightModeToggle from "./components/NightModeToggle";
 import useUIStore from "./stores/UIStore";
-import useNavigationHandler from "./controllers/navigationHandler";
+import useNavigationHandler from "./components/controllers/navigationHandler";
 
 gsap.registerPlugin(TextPlugin);
 

@@ -7,7 +7,7 @@ import { useTheme } from "../context/ThemeContext";
 import useStateStore from "../stores/stateStore";
 import NightModeToggle from "../components/NightModeToggle";
 import useUIStore from "../stores/UIStore";
-import useNavigationHandler from "../controllers/navigationHandler";
+import useNavigationHandler from "../components/controllers/navigationHandler";
 
 // This component handles the physics simulation within the Canvas context
 function PhysicsSimulation({ physicsWorld }) {

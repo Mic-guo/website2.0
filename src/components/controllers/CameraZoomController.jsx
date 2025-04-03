@@ -6,8 +6,8 @@ import {
   CAMERA_OFFSET,
   CAMERA_ANIMATION_OFFSET,
   CameraPositions,
-} from "../utils/constants";
-import useUIStore from "../stores/UIStore";
+} from "../../utils/constants";
+import useUIStore from "../../stores/UIStore";
 
 export function CameraZoomController() {
   const { camera } = useThree();

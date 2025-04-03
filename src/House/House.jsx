@@ -8,7 +8,7 @@ import {
   CAMERA_ANIMATION_OFFSET,
 } from "../utils/constants";
 // import CameraController from "../controllers/cameraController";
-import { CameraZoomController } from "../controllers/CameraZoomController";
+import { CameraZoomController } from "../components/controllers/CameraZoomController";
 import useUIStore from "../stores/UIStore";
 
 export default function House() {

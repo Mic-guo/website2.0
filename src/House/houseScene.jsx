@@ -14,9 +14,9 @@ import { DayMode } from "./sceneEffects/DaytimeScene";
 import Snow from "./sceneEffects/Snow";
 import useHoverStore from "../stores/hoverStore";
 import gsap from "gsap";
-import { CameraZoomController } from "../controllers/CameraZoomController";
+import { CameraZoomController } from "../components/controllers/CameraZoomController";
 import useUIStore from "../stores/UIStore";
-import useNavigationHandler from "../controllers/navigationHandler";
+import useNavigationHandler from "../components/controllers/navigationHandler";
 
 export default function Scene({ ...props }) {
   const { nodes, materials } = useSpline(sceneFile);

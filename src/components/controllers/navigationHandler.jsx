@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import useStateStore from "../stores/stateStore";
-import useUIStore from "../stores/UIStore";
+import useStateStore from "../../stores/stateStore";
+import useUIStore from "../../stores/UIStore";
 import { gsap } from "gsap";
-import { CameraPositions } from "../utils/constants";
+import { CameraPositions } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
 // Available states: "landing", "houseScene", "polaroid", "zoomed"
 
