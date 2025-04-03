@@ -1,4 +1,3 @@
-// CursorManager.jsx with improved approach
 import { useEffect, useRef } from "react";
 import cursorDot from "cursor-dot";
 
