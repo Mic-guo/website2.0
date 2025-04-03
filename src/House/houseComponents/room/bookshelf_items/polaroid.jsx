@@ -52,9 +52,9 @@ const Polaroid = forwardRef(function Polaroid({ nodes, materials }, ref) {
               scale={1}
             />
             <mesh
-              name="Cube6"
-              geometry={nodes.Cube6.geometry}
-              material={materials["Cube6 Material"]}
+              name="Cube8"
+              geometry={nodes.Cube8.geometry}
+              material={materials["Cube8 Material"]}
               castShadow
               receiveShadow
               position={[0, -0.67, 0]}

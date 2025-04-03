@@ -135,8 +135,8 @@ const Roof = forwardRef(({ nodes }, ref) => {
           <StoneGrayMaterial />
         </mesh>
         <mesh
-          name="Cube 2"
-          geometry={nodes["Cube 2"].geometry}
+          name="Cube 22"
+          geometry={nodes["Cube 22"].geometry}
           // castShadow
           receiveShadow
           position={[0, -18.76, 0]}
@@ -201,8 +201,8 @@ const Roof = forwardRef(({ nodes }, ref) => {
           <LightStoneMaterial />
         </mesh>
         <mesh
-          name="Cube"
-          geometry={nodes.Cube.geometry}
+          name="Cube2"
+          geometry={nodes.Cube2.geometry}
           // castShadow
           receiveShadow
           position={[0, -75.94, 0]}

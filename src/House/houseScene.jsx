@@ -17,6 +17,7 @@ import gsap from "gsap";
 import { CameraZoomController } from "../components/controllers/CameraZoomController";
 import useUIStore from "../stores/UIStore";
 import useNavigationHandler from "../components/controllers/navigationHandler";
+import PolaroidModel from "./houseComponents/room/polaroidModel";
 
 export default function Scene({ ...props }) {
   const { nodes, materials } = useSpline(sceneFile);
@@ -169,6 +170,7 @@ export default function Scene({ ...props }) {
             <SpeakerLight nodes={nodes} materials={materials} />
             <Calendar nodes={nodes} materials={materials} />
             <Bookshelf nodes={nodes} materials={materials} />
+            <PolaroidModel nodes={nodes} materials={materials} />
           </group>
         </scene>
       </group>

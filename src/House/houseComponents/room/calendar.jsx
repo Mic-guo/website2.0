@@ -2,7 +2,7 @@ export default function Calendar({ nodes, materials }) {
   return (
     <group
       name="Calendar"
-      position={[371.18, 63.37, 101.41]}
+      position={[375.61, 63.37, 291.92]}
       rotation={[Math.PI, -1.57, Math.PI]}
       scale={[0.61, 0.59, 0.62]}
     >

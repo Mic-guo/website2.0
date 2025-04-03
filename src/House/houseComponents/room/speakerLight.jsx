@@ -2,7 +2,7 @@ export default function SpeakerLight({ nodes, materials }) {
   return (
     <group
       name="Lamp + light"
-      position={[323.78, -88.49, -256.83]}
+      position={[303.91, -88.49, -300.21]}
       scale={[0.38, 0.37, 0.38]}
     >
       <group
@@ -41,8 +41,8 @@ export default function SpeakerLight({ nodes, materials }) {
             scale={[0.69, 0.74, 0.02]}
           />
           <mesh
-            name="Cube4"
-            geometry={nodes.Cube4.geometry}
+            name="Cube6"
+            geometry={nodes.Cube6.geometry}
             material={materials.greydarker}
             castShadow
             receiveShadow

@@ -322,7 +322,7 @@ export default function Desk({ nodes, materials }) {
           <mesh
             name="Cube 32"
             geometry={nodes["Cube 32"].geometry}
-            material={materials.metal}
+            material={materials[""]}
             castShadow
             receiveShadow
             position={[0.57, -3.12, -4.3]}
@@ -343,7 +343,7 @@ export default function Desk({ nodes, materials }) {
           <mesh
             name="Cube 33"
             geometry={nodes["Cube 33"].geometry}
-            material={materials.metal}
+            material={materials[""]}
             castShadow
             receiveShadow
             position={[0.57, -3.12, -4.3]}
@@ -378,7 +378,7 @@ export default function Desk({ nodes, materials }) {
             <mesh
               name="Cylinder 5"
               geometry={nodes["Cylinder 5"].geometry}
-              material={materials.metal}
+              material={materials[""]}
               castShadow
               receiveShadow
               position={[2.76, -3.62, 0.1]}
@@ -408,7 +408,7 @@ export default function Desk({ nodes, materials }) {
             <mesh
               name="Cylinder 4"
               geometry={nodes["Cylinder 4"].geometry}
-              material={materials.metal}
+              material={materials[""]}
               castShadow
               receiveShadow
               position={[-2.94, -3.62, 0.1]}
@@ -452,7 +452,7 @@ export default function Desk({ nodes, materials }) {
             <mesh
               name="Cylinder 51"
               geometry={nodes["Cylinder 51"].geometry}
-              material={materials.metal}
+              material={materials[""]}
               castShadow
               receiveShadow
               position={[2.76, -3.62, 0.1]}
@@ -482,7 +482,7 @@ export default function Desk({ nodes, materials }) {
             <mesh
               name="Cylinder 41"
               geometry={nodes["Cylinder 41"].geometry}
-              material={materials.metal}
+              material={materials[""]}
               castShadow
               receiveShadow
               position={[-2.94, -3.62, 0.1]}
@@ -527,7 +527,7 @@ export default function Desk({ nodes, materials }) {
             <mesh
               name="Cylinder 52"
               geometry={nodes["Cylinder 52"].geometry}
-              material={materials.metal}
+              material={materials[""]}
               castShadow
               receiveShadow
               position={[2.76, -3.62, 0.1]}
@@ -557,7 +557,7 @@ export default function Desk({ nodes, materials }) {
             <mesh
               name="Cylinder 42"
               geometry={nodes["Cylinder 42"].geometry}
-              material={materials.metal}
+              material={materials[""]}
               castShadow
               receiveShadow
               position={[-2.94, -3.62, 0.1]}
@@ -597,7 +597,7 @@ export default function Desk({ nodes, materials }) {
             <mesh
               name="Cylinder 53"
               geometry={nodes["Cylinder 53"].geometry}
-              material={materials.metal}
+              material={materials[""]}
               castShadow
               receiveShadow
               position={[2.76, -3.62, 0.1]}
@@ -627,7 +627,7 @@ export default function Desk({ nodes, materials }) {
             <mesh
               name="Cylinder 43"
               geometry={nodes["Cylinder 43"].geometry}
-              material={materials.metal}
+              material={materials[""]}
               castShadow
               receiveShadow
               position={[-2.94, -3.62, 0.1]}
@@ -672,7 +672,7 @@ export default function Desk({ nodes, materials }) {
           <mesh
             name="Cylinder1"
             geometry={nodes.Cylinder1.geometry}
-            material={materials.metal}
+            material={materials[""]}
             castShadow
             receiveShadow
             position={[-0.34, 0.03, 0.08]}
@@ -681,8 +681,8 @@ export default function Desk({ nodes, materials }) {
         </group>
         <group name="bodychair" position={[0.51, 223.3, 6.21]} scale={2.04}>
           <mesh
-            name="Cube 21"
-            geometry={nodes["Cube 21"].geometry}
+            name="Cube 23"
+            geometry={nodes["Cube 23"].geometry}
             material={materials.greydarker}
             castShadow
             receiveShadow
@@ -700,8 +700,8 @@ export default function Desk({ nodes, materials }) {
             scale={[0.82, 0.88, 0.25]}
           />
           <mesh
-            name="Cube1"
-            geometry={nodes.Cube1.geometry}
+            name="Cube3"
+            geometry={nodes.Cube3.geometry}
             material={materials.greydarker}
             castShadow
             receiveShadow
@@ -709,8 +709,8 @@ export default function Desk({ nodes, materials }) {
             scale={[0.81, 0.88, 0.25]}
           />
           <mesh
-            name="Cube2"
-            geometry={nodes.Cube2.geometry}
+            name="Cube4"
+            geometry={nodes.Cube4.geometry}
             material={materials.black}
             castShadow
             receiveShadow
@@ -780,8 +780,8 @@ export default function Desk({ nodes, materials }) {
             scale={[-0.26, 0.29, 0.25]}
           />
           <mesh
-            name="Cube 23"
-            geometry={nodes["Cube 23"].geometry}
+            name="Cube 231"
+            geometry={nodes["Cube 231"].geometry}
             material={materials.green}
             castShadow
             receiveShadow
@@ -790,8 +790,8 @@ export default function Desk({ nodes, materials }) {
             scale={[-0.27, 0.26, 0.25]}
           />
           <mesh
-            name="Cube 22"
-            geometry={nodes["Cube 22"].geometry}
+            name="Cube 221"
+            geometry={nodes["Cube 221"].geometry}
             material={materials.green}
             castShadow
             receiveShadow
@@ -810,8 +810,8 @@ export default function Desk({ nodes, materials }) {
             scale={[1, 1, 0.68]}
           />
           <mesh
-            name="Cube3"
-            geometry={nodes.Cube3.geometry}
+            name="Cube5"
+            geometry={nodes.Cube5.geometry}
             material={materials.pink}
             castShadow
             receiveShadow

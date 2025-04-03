@@ -208,9 +208,9 @@ export default function Pig({ nodes, materials }) {
         scale={1.8}
       />
       <mesh
-        name="Cube5"
-        geometry={nodes.Cube5.geometry}
-        material={materials["Cube5 Material"]}
+        name="Cube7"
+        geometry={nodes.Cube7.geometry}
+        material={materials["Cube7 Material"]}
         castShadow
         receiveShadow
         position={[-18.96, -105.66, 132.88]}

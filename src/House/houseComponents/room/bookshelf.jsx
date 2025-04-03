@@ -341,8 +341,8 @@ export default function Bookshelf({ nodes, materials }) {
           scale={[1.15, 1.05, 10.57]}
         />
         <mesh
-          name="Cube7"
-          geometry={nodes.Cube7.geometry}
+          name="Cube9"
+          geometry={nodes.Cube9.geometry}
           material={materials.red}
           castShadow
           receiveShadow
@@ -462,8 +462,8 @@ export default function Bookshelf({ nodes, materials }) {
           scale={[1.15, 1.05, 10.57]}
         />
         <mesh
-          name="Cube8"
-          geometry={nodes.Cube8.geometry}
+          name="Cube10"
+          geometry={nodes.Cube10.geometry}
           material={materials.red}
           castShadow
           receiveShadow
@@ -489,8 +489,8 @@ export default function Bookshelf({ nodes, materials }) {
             scale={[0.87, 0.87, 8.01]}
           />
           <mesh
-            name="Cube9"
-            geometry={nodes.Cube9.geometry}
+            name="Cube11"
+            geometry={nodes.Cube11.geometry}
             material={materials.gold}
             castShadow
             receiveShadow
@@ -511,8 +511,8 @@ export default function Bookshelf({ nodes, materials }) {
             scale={[0.55, 0.71, 5.05]}
           />
           <mesh
-            name="Cube10"
-            geometry={nodes.Cube10.geometry}
+            name="Cube12"
+            geometry={nodes.Cube12.geometry}
             material={materials.blue}
             castShadow
             receiveShadow
