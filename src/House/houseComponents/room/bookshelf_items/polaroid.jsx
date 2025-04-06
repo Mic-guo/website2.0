@@ -32,7 +32,7 @@ const Polaroid = forwardRef(function Polaroid({ nodes, materials }, ref) {
         scale={0.07}
         onClick={(e) => {
           e.stopPropagation();
-          handleEnterNavigationState("polaroid");
+          // handleEnterNavigationState("polaroid");
         }}
       >
         <group

@@ -2,6 +2,8 @@ import useSpline from "@splinetool/r3f-spline";
 import { useFrame } from "@react-three/fiber";
 import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 import sceneFile from "../House/scene.splinecode?url";
 import Roof from "./houseComponents/roof";
 import SidesBase from "./houseComponents/sides+base";
