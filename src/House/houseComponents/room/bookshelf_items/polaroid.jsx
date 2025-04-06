@@ -42,9 +42,9 @@ const Polaroid = forwardRef(function Polaroid({ nodes, materials }, ref) {
         >
           <group name="Picture" position={[-6.23, -90.46, 76.01]}>
             <mesh
-              name="Rectangle5"
-              geometry={nodes.Rectangle5.geometry}
-              material={materials["Rectangle5 Material"]}
+              name="Rectangle6"
+              geometry={nodes.Rectangle6.geometry}
+              material={materials["Rectangle6 Material"]}
               castShadow
               receiveShadow
               position={[0, 1.67, -22.96]}

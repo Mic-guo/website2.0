@@ -35,18 +35,20 @@ export default function House() {
           />
           <CameraZoomController />
           <OrbitControls
-            enableZoom={false}
+            enableZoom={isZoomedIn ? true : false}
+            maxZoom={1}
+            minZoom={0.3}
             enableRotate={true}
             enablePan={false}
             enableDamping={true}
             dampingFactor={0.05}
+            rotateSpeed={0.2}
+            mouseWheelSpeed={0.5}
             target={[39.23, 2427.88, 306.66]}
             maxPolarAngle={Math.PI / 2} // 45 degrees from vertical, how high the cam can go
             minPolarAngle={Math.PI / 4} // 90 degrees from vertical, how low the cam can go
-            maxAzimuthAngle={isZoomedIn ? Math.PI / 12 : Infinity}
-            minAzimuthAngle={
-              isZoomedIn ? -(Math.PI / 2 + Math.PI / 24) : -Infinity
-            }
+            maxAzimuthAngle={isZoomedIn ? 0 : Infinity}
+            minAzimuthAngle={isZoomedIn ? -(Math.PI / 2) : -Infinity}
           />
           <Scene />
         </Suspense>

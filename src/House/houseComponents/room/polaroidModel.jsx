@@ -1,527 +1,663 @@
+import { useLoader } from "@react-three/fiber";
+import { TextureLoader } from "three";
+import * as THREE from "three";
+
 export default function PolaroidModel({ nodes, materials }) {
+  // Load all textures with optimized settings
+  const loadTextureWithSettings = (path) => {
+    const texture = useLoader(TextureLoader, path);
+    texture.encoding = THREE.sRGBEncoding;
+    texture.anisotropy = 16;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.generateMipmaps = true;
+    texture.center.set(0.5, 0.5);
+    texture.rotation = Math.PI / 2;
+    texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
+
+    // Wait for texture to load to get image dimensions
+    texture.onLoad = () => {
+      const imageAspect = texture.image.width / texture.image.height;
+      // Adjust UV coordinates to maintain aspect ratio
+      texture.matrixAutoUpdate = false;
+      texture.matrix.setUvTransform(0, 0, 1, 1, 0, 0.5, 0.5);
+      if (imageAspect > 1) {
+        texture.matrix.scale(1, imageAspect, 1);
+      } else {
+        texture.matrix.scale(1 / imageAspect, 1, 1);
+      }
+    };
+
+    return texture;
+  };
+
+  // Generate array of 27 textures
+  const textures = Array.from({ length: 27 }, (_, i) =>
+    loadTextureWithSettings(`/images/IMG_${i + 1}.jpeg`)
+  );
+
+  // Create a material configuration for photos that ignores lighting
+  const createPhotoMaterial = (textureIndex) => {
+    const texture = textures[textureIndex];
+    return new THREE.MeshStandardMaterial({
+      map: texture,
+      side: THREE.DoubleSide,
+      emissive: new THREE.Color(0xffffff),
+      emissiveMap: texture,
+      emissiveIntensity: 1.0,
+      metalness: 0,
+      roughness: 1,
+    });
+  };
+
   return (
-    <group
-      name="PolaroidLine"
-      position={[390.89, 157.84, -96.69]}
-      scale={[0.38, 0.37, 0.38]}
-    >
-      <group name="PolaroidLine 2" position={[0, -203.75, 0]}>
-        <group name="PolaroidLine 21" position={[0, -205.29, 0]}>
+    <group name="All Polaroids" position={[382.54, 89.79, -96.69]}>
+      <group
+        name="Polaroid Line"
+        position={[8.87, 73.17, -20.07]}
+        rotation={[0, -Math.PI / 2, 0]}
+        scale={[0.38, 0.37, 0.38]}
+      >
+        <group name="BlenderLine" position={[0, -126.88, -43.45]} scale={1.12}>
+          <mesh
+            name="Test"
+            geometry={nodes.Test.geometry}
+            material={nodes.Test.material}
+            castShadow
+            receiveShadow
+            rotation={[-Math.PI / 2, 0, 0]}
+            scale={100}
+          />
+        </group>
+        <group name="Polaroids on line" position={[-1.63, 14.33, 37.68]}>
           <group
-            name="BlenderLine"
-            position={[43.45, -126.88, 0]}
-            rotation={[0, -Math.PI / 2, 0]}
-            scale={1.12}
+            name="1stPic"
+            position={[-485.26, 8.31, 0.94]}
+            rotation={[Math.PI / 2, -0.11, 0]}
+            scale={0.35}
           >
+            <group
+              name="Paper Clip2"
+              position={[-10.58, -1.24, -191.11]}
+              rotation={[-0.01, 0, 0]}
+              scale={[1.54, 1, 1.08]}
+            >
+              <mesh
+                name="Path2"
+                geometry={nodes.Path2.geometry}
+                material={materials["Path2 Material"]}
+                castShadow
+                receiveShadow
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 216"
+                geometry={nodes["Cube 216"].geometry}
+                material={materials["Cube 216 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.28, -0.2]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube13"
+                geometry={nodes.Cube13.geometry}
+                material={materials["Cube13 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
+              />
+            </group>
             <mesh
-              name="Test"
-              geometry={nodes.Test.geometry}
-              material={nodes.Test.material}
+              name="Polaroid Frame2"
+              geometry={nodes["Polaroid Frame2"].geometry}
+              material={materials["Polaroid Frame2 Material"]}
+              position={[0, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle8"
+                geometry={nodes.Rectangle8.geometry}
+                material={createPhotoMaterial(0)}
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
+          </group>
+          <group
+            name="2ndPic"
+            position={[-359.93, -11.98, 1.14]}
+            rotation={[Math.PI / 2, -0.05, 0]}
+            scale={0.35}
+          >
+            <group
+              name="Paper Clip3"
+              position={[39.69, -1.2, -185.56]}
+              rotation={[0.04, -0.1, 0.01]}
+              scale={[1.54, 1, 1.08]}
+            >
+              <mesh
+                name="Path3"
+                geometry={nodes.Path3.geometry}
+                material={materials["Path3 Material"]}
+                castShadow
+                receiveShadow
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 217"
+                geometry={nodes["Cube 217"].geometry}
+                material={materials["Cube 217 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.28, -0.2]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube14"
+                geometry={nodes.Cube14.geometry}
+                material={materials["Cube14 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
+              />
+            </group>
+            <mesh
+              name="Polaroid Frame3"
+              geometry={nodes["Polaroid Frame3"].geometry}
+              material={materials["Polaroid Frame3 Material"]}
               castShadow
               receiveShadow
-              rotation={[-Math.PI / 2, 0, 0]}
-              scale={100}
-            />
+              position={[4.6, -14.71, 12.8]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle9"
+                geometry={nodes.Rectangle9.geometry}
+                material={createPhotoMaterial(1)}
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
           <group
-            name="Polaroids on line"
-            position={[-37.68, 14.33, -1.63]}
-            rotation={[0, -Math.PI / 2, 0]}
+            name="3rdPic"
+            position={[-241.96, -28.44, 0.83]}
+            rotation={[Math.PI / 2, -0.05, 0]}
+            scale={0.35}
           >
             <group
-              name="1stPic"
-              position={[-485.26, 8.31, 0.94]}
-              rotation={[Math.PI / 2, -0.11, 0]}
-              scale={0.35}
+              name="Paper Clip4"
+              position={[20.5, -0.7, -190.22]}
+              rotation={[-0.01, 0.14, 0]}
+              scale={[1.54, 1, 1.08]}
             >
-              <group
-                name="Paper Clip2"
-                position={[-10.58, -1.24, -191.11]}
-                rotation={[-0.01, 0, 0]}
-                scale={[1.54, 1, 1.08]}
-              >
-                <mesh
-                  name="Path2"
-                  geometry={nodes.Path2.geometry}
-                  material={materials["Path2 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[-9.73, 6.54, 15.11]}
-                  rotation={[-1.65, 0.06, 0.01]}
-                  scale={[0.62, 0.95, 1.03]}
-                />
-                <mesh
-                  name="Cube 216"
-                  geometry={nodes["Cube 216"].geometry}
-                  material={materials["Cube 216 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, 4.28, -0.2]}
-                  rotation={[-0.09, 0, 0]}
-                  scale={[1, 1.01, 0.68]}
-                />
-                <mesh
-                  name="Cube13"
-                  geometry={nodes.Cube13.geometry}
-                  material={materials["Cube13 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, -7.79, 0.65]}
-                  rotation={[0.1, 0, 0]}
-                  scale={[1, 1, 0.69]}
-                />
-              </group>
               <mesh
-                name="Polaroid Frame2"
-                geometry={nodes["Polaroid Frame2"].geometry}
-                material={materials["Polaroid Frame2 Material"]}
+                name="Path4"
+                geometry={nodes.Path4.geometry}
+                material={materials["Path4 Material"]}
                 castShadow
                 receiveShadow
-                position={[0, -10.71, 0]}
-                rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-                scale={1}
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 218"
+                geometry={nodes["Cube 218"].geometry}
+                material={materials["Cube 218 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.79, -0.24]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube15"
+                geometry={nodes.Cube15.geometry}
+                material={materials["Cube15 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
               />
             </group>
+            <mesh
+              name="Polaroid Frame4"
+              geometry={nodes["Polaroid Frame4"].geometry}
+              material={materials["Polaroid Frame4 Material"]}
+              castShadow
+              receiveShadow
+              position={[20.46, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle10"
+                geometry={nodes.Rectangle10.geometry}
+                material={createPhotoMaterial(2)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
+          </group>
+          <group
+            name="4thPic"
+            position={[-113.38, -34.01, 1.4]}
+            rotation={[Math.PI / 2, 0.02, 0]}
+            scale={0.35}
+          >
             <group
-              name="2ndPic"
-              position={[-359.93, -11.98, 1.14]}
-              rotation={[Math.PI / 2, -0.05, 0]}
-              scale={0.35}
+              name="Paper Clip5"
+              position={[-10.58, -1.24, -191.11]}
+              rotation={[-0.01, -0.05, 0]}
+              scale={[1.54, 1, 1.08]}
             >
-              <group
-                name="Paper Clip3"
-                position={[39.69, -1.2, -185.56]}
-                rotation={[0.04, -0.1, 0.01]}
-                scale={[1.54, 1, 1.08]}
-              >
-                <mesh
-                  name="Path3"
-                  geometry={nodes.Path3.geometry}
-                  material={materials["Path3 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[-9.73, 6.54, 15.11]}
-                  rotation={[-1.65, 0.06, 0.01]}
-                  scale={[0.62, 0.95, 1.03]}
-                />
-                <mesh
-                  name="Cube 217"
-                  geometry={nodes["Cube 217"].geometry}
-                  material={materials["Cube 217 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, 4.28, -0.2]}
-                  rotation={[-0.09, 0, 0]}
-                  scale={[1, 1.01, 0.68]}
-                />
-                <mesh
-                  name="Cube14"
-                  geometry={nodes.Cube14.geometry}
-                  material={materials["Cube14 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, -7.79, 0.65]}
-                  rotation={[0.1, 0, 0]}
-                  scale={[1, 1, 0.69]}
-                />
-              </group>
               <mesh
-                name="Polaroid Frame3"
-                geometry={nodes["Polaroid Frame3"].geometry}
-                material={materials["Polaroid Frame3 Material"]}
+                name="Path5"
+                geometry={nodes.Path5.geometry}
+                material={materials["Path5 Material"]}
                 castShadow
                 receiveShadow
-                position={[4.6, -14.71, 12.8]}
-                rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-                scale={1}
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 219"
+                geometry={nodes["Cube 219"].geometry}
+                material={materials["Cube 219 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.28, -0.2]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube16"
+                geometry={nodes.Cube16.geometry}
+                material={materials["Cube16 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
               />
             </group>
+            <mesh
+              name="Polaroid Frame5"
+              geometry={nodes["Polaroid Frame5"].geometry}
+              material={materials["Polaroid Frame5 Material"]}
+              castShadow
+              receiveShadow
+              position={[0, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle11"
+                geometry={nodes.Rectangle11.geometry}
+                material={createPhotoMaterial(3)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
+          </group>
+          <group
+            name="Center"
+            position={[-1.34, -39.96, 1.25]}
+            rotation={[Math.PI / 2, 0.01, 0]}
+            scale={0.35}
+          >
             <group
-              name="3rdPic"
-              position={[-241.96, -28.44, 0.83]}
-              rotation={[Math.PI / 2, -0.05, 0]}
-              scale={0.35}
+              name="Paper Clip6"
+              position={[12.53, -1.33, -202.7]}
+              rotation={[-0.01, -0.09, 0]}
+              scale={[1.54, 1, 1.08]}
             >
-              <group
-                name="Paper Clip4"
-                position={[20.5, -0.7, -190.22]}
-                rotation={[-0.01, 0.14, 0]}
-                scale={[1.54, 1, 1.08]}
-              >
-                <mesh
-                  name="Path4"
-                  geometry={nodes.Path4.geometry}
-                  material={materials["Path4 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[-9.73, 6.54, 15.11]}
-                  rotation={[-1.65, 0.06, 0.01]}
-                  scale={[0.62, 0.95, 1.03]}
-                />
-                <mesh
-                  name="Cube 218"
-                  geometry={nodes["Cube 218"].geometry}
-                  material={materials["Cube 218 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, 4.79, -0.24]}
-                  rotation={[-0.09, 0, 0]}
-                  scale={[1, 1.01, 0.68]}
-                />
-                <mesh
-                  name="Cube15"
-                  geometry={nodes.Cube15.geometry}
-                  material={materials["Cube15 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, -7.79, 0.65]}
-                  rotation={[0.1, 0, 0]}
-                  scale={[1, 1, 0.69]}
-                />
-              </group>
               <mesh
-                name="Polaroid Frame4"
-                geometry={nodes["Polaroid Frame4"].geometry}
-                material={materials["Polaroid Frame4 Material"]}
+                name="Path6"
+                geometry={nodes.Path6.geometry}
+                material={materials["Path6 Material"]}
                 castShadow
                 receiveShadow
-                position={[20.46, -10.71, 0]}
-                rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-                scale={1}
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 220"
+                geometry={nodes["Cube 220"].geometry}
+                material={materials["Cube 220 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.28, -0.2]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube17"
+                geometry={nodes.Cube17.geometry}
+                material={materials["Cube17 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
               />
             </group>
+            <mesh
+              name="Polaroid Frame6"
+              geometry={nodes["Polaroid Frame6"].geometry}
+              material={materials["Polaroid Frame6 Material"]}
+              castShadow
+              receiveShadow
+              position={[0, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle12"
+                geometry={nodes.Rectangle12.geometry}
+                material={createPhotoMaterial(4)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
+          </group>
+          <group
+            name="6thPic"
+            position={[127.4, -36.86, 1.2]}
+            rotation={[Math.PI / 2, 0.09, 0]}
+            scale={0.35}
+          >
             <group
-              name="4thPic"
-              position={[-113.38, -34.01, 1.4]}
-              rotation={[Math.PI / 2, 0.02, 0]}
-              scale={0.35}
+              name="Paper Clip7"
+              position={[2.29, -1.25, -192.35]}
+              rotation={[-0.01, 0.1, 0]}
+              scale={[1.54, 1, 1.08]}
             >
-              <group
-                name="Paper Clip5"
-                position={[-10.58, -1.24, -191.11]}
-                rotation={[-0.01, -0.05, 0]}
-                scale={[1.54, 1, 1.08]}
-              >
-                <mesh
-                  name="Path5"
-                  geometry={nodes.Path5.geometry}
-                  material={materials["Path5 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[-9.73, 6.54, 15.11]}
-                  rotation={[-1.65, 0.06, 0.01]}
-                  scale={[0.62, 0.95, 1.03]}
-                />
-                <mesh
-                  name="Cube 219"
-                  geometry={nodes["Cube 219"].geometry}
-                  material={materials["Cube 219 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, 4.28, -0.2]}
-                  rotation={[-0.09, 0, 0]}
-                  scale={[1, 1.01, 0.68]}
-                />
-                <mesh
-                  name="Cube16"
-                  geometry={nodes.Cube16.geometry}
-                  material={materials["Cube16 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, -7.79, 0.65]}
-                  rotation={[0.1, 0, 0]}
-                  scale={[1, 1, 0.69]}
-                />
-              </group>
               <mesh
-                name="Polaroid Frame5"
-                geometry={nodes["Polaroid Frame5"].geometry}
-                material={materials["Polaroid Frame5 Material"]}
+                name="Path7"
+                geometry={nodes.Path7.geometry}
+                material={materials["Path7 Material"]}
                 castShadow
                 receiveShadow
-                position={[0, -10.71, 0]}
-                rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-                scale={1}
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 222"
+                geometry={nodes["Cube 222"].geometry}
+                material={materials["Cube 222 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.28, -0.2]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube18"
+                geometry={nodes.Cube18.geometry}
+                material={materials["Cube18 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
               />
             </group>
+            <mesh
+              name="Polaroid Frame7"
+              geometry={nodes["Polaroid Frame7"].geometry}
+              material={materials["Polaroid Frame7 Material"]}
+              castShadow
+              receiveShadow
+              position={[0, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle13"
+                geometry={nodes.Rectangle13.geometry}
+                material={createPhotoMaterial(5)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
+          </group>
+          <group
+            name="7thPic"
+            position={[245.02, -32.51, 1.16]}
+            rotation={[Math.PI / 2, 0.12, 0]}
+            scale={0.35}
+          >
             <group
-              name="Center"
-              position={[-1.34, -39.96, 1.25]}
-              rotation={[Math.PI / 2, 0.01, 0]}
-              scale={0.35}
+              name="Paper Clip8"
+              position={[11.79, -1.24, -191.11]}
+              rotation={[-0.01, 0, 0]}
+              scale={[1.54, 1, 1.08]}
             >
-              <group
-                name="Paper Clip6"
-                position={[12.53, -1.33, -202.7]}
-                rotation={[-0.01, -0.09, 0]}
-                scale={[1.54, 1, 1.08]}
-              >
-                <mesh
-                  name="Path6"
-                  geometry={nodes.Path6.geometry}
-                  material={materials["Path6 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[-9.73, 6.54, 15.11]}
-                  rotation={[-1.65, 0.06, 0.01]}
-                  scale={[0.62, 0.95, 1.03]}
-                />
-                <mesh
-                  name="Cube 220"
-                  geometry={nodes["Cube 220"].geometry}
-                  material={materials["Cube 220 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, 4.28, -0.2]}
-                  rotation={[-0.09, 0, 0]}
-                  scale={[1, 1.01, 0.68]}
-                />
-                <mesh
-                  name="Cube17"
-                  geometry={nodes.Cube17.geometry}
-                  material={materials["Cube17 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, -7.79, 0.65]}
-                  rotation={[0.1, 0, 0]}
-                  scale={[1, 1, 0.69]}
-                />
-              </group>
               <mesh
-                name="Polaroid Frame6"
-                geometry={nodes["Polaroid Frame6"].geometry}
-                material={materials["Polaroid Frame6 Material"]}
+                name="Path8"
+                geometry={nodes.Path8.geometry}
+                material={materials["Path8 Material"]}
                 castShadow
                 receiveShadow
-                position={[0, -10.71, 0]}
-                rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-                scale={1}
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 223"
+                geometry={nodes["Cube 223"].geometry}
+                material={materials["Cube 223 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.28, -0.2]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube19"
+                geometry={nodes.Cube19.geometry}
+                material={materials["Cube19 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
               />
             </group>
+            <mesh
+              name="Polaroid Frame8"
+              geometry={nodes["Polaroid Frame8"].geometry}
+              material={materials["Polaroid Frame8 Material"]}
+              castShadow
+              receiveShadow
+              position={[0, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle14"
+                geometry={nodes.Rectangle14.geometry}
+                material={createPhotoMaterial(6)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
+          </group>
+          <group
+            name="8thPic"
+            position={[386.32, -16.01, 0.86]}
+            rotation={[Math.PI / 2, 0.04, 0]}
+            scale={0.35}
+          >
             <group
-              name="6thPic"
-              position={[127.4, -36.86, 1.2]}
-              rotation={[Math.PI / 2, 0.09, 0]}
-              scale={0.35}
+              name="Paper Clip9"
+              position={[-50.67, -1.28, -194.67]}
+              rotation={[-0.01, -0.16, 0]}
+              scale={[1.54, 1, 1.08]}
             >
-              <group
-                name="Paper Clip7"
-                position={[2.29, -1.25, -192.35]}
-                rotation={[-0.01, 0.1, 0]}
-                scale={[1.54, 1, 1.08]}
-              >
-                <mesh
-                  name="Path7"
-                  geometry={nodes.Path7.geometry}
-                  material={materials["Path7 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[-9.73, 6.54, 15.11]}
-                  rotation={[-1.65, 0.06, 0.01]}
-                  scale={[0.62, 0.95, 1.03]}
-                />
-                <mesh
-                  name="Cube 222"
-                  geometry={nodes["Cube 222"].geometry}
-                  material={materials["Cube 222 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, 4.28, -0.2]}
-                  rotation={[-0.09, 0, 0]}
-                  scale={[1, 1.01, 0.68]}
-                />
-                <mesh
-                  name="Cube18"
-                  geometry={nodes.Cube18.geometry}
-                  material={materials["Cube18 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, -7.79, 0.65]}
-                  rotation={[0.1, 0, 0]}
-                  scale={[1, 1, 0.69]}
-                />
-              </group>
               <mesh
-                name="Polaroid Frame7"
-                geometry={nodes["Polaroid Frame7"].geometry}
-                material={materials["Polaroid Frame7 Material"]}
+                name="Path9"
+                geometry={nodes.Path9.geometry}
+                material={materials["Path9 Material"]}
                 castShadow
                 receiveShadow
-                position={[0, -10.71, 0]}
-                rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-                scale={1}
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 224"
+                geometry={nodes["Cube 224"].geometry}
+                material={materials["Cube 224 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.37, 0.63]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube20"
+                geometry={nodes.Cube20.geometry}
+                material={materials["Cube20 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
               />
             </group>
+            <mesh
+              name="Polaroid Frame9"
+              geometry={nodes["Polaroid Frame9"].geometry}
+              material={materials["Polaroid Frame9 Material"]}
+              castShadow
+              receiveShadow
+              position={[-64.24, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle15"
+                geometry={nodes.Rectangle15.geometry}
+                material={createPhotoMaterial(7)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
+          </group>
+          <group
+            name="9thPic"
+            position={[487.85, 4.62, 0.73]}
+            rotation={[Math.PI / 2, 0.07, 0]}
+            scale={0.35}
+          >
             <group
-              name="7thPic"
-              position={[245.02, -32.51, 1.16]}
-              rotation={[Math.PI / 2, 0.12, 0]}
-              scale={0.35}
+              name="Paper Clip10"
+              position={[-32.21, -1.63, -188.22]}
+              rotation={[-0.06, 0.13, 0.01]}
+              scale={[1.54, 1, 1.08]}
             >
-              <group
-                name="Paper Clip8"
-                position={[11.79, -1.24, -191.11]}
-                rotation={[-0.01, 0, 0]}
-                scale={[1.54, 1, 1.08]}
-              >
-                <mesh
-                  name="Path8"
-                  geometry={nodes.Path8.geometry}
-                  material={materials["Path8 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[-9.73, 6.54, 15.11]}
-                  rotation={[-1.65, 0.06, 0.01]}
-                  scale={[0.62, 0.95, 1.03]}
-                />
-                <mesh
-                  name="Cube 223"
-                  geometry={nodes["Cube 223"].geometry}
-                  material={materials["Cube 223 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, 4.28, -0.2]}
-                  rotation={[-0.09, 0, 0]}
-                  scale={[1, 1.01, 0.68]}
-                />
-                <mesh
-                  name="Cube19"
-                  geometry={nodes.Cube19.geometry}
-                  material={materials["Cube19 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, -7.79, 0.65]}
-                  rotation={[0.1, 0, 0]}
-                  scale={[1, 1, 0.69]}
-                />
-              </group>
               <mesh
-                name="Polaroid Frame8"
-                geometry={nodes["Polaroid Frame8"].geometry}
-                material={materials["Polaroid Frame8 Material"]}
+                name="Path10"
+                geometry={nodes.Path10.geometry}
+                material={materials["Path10 Material"]}
                 castShadow
                 receiveShadow
-                position={[0, -10.71, 0]}
-                rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-                scale={1}
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
               />
-            </group>
-            <group
-              name="8thPic"
-              position={[386.32, -16.01, 0.86]}
-              rotation={[Math.PI / 2, 0.04, 0]}
-              scale={0.35}
-            >
-              <group
-                name="Paper Clip9"
-                position={[-50.67, -1.28, -194.67]}
-                rotation={[-0.01, -0.16, 0]}
-                scale={[1.54, 1, 1.08]}
-              >
-                <mesh
-                  name="Path9"
-                  geometry={nodes.Path9.geometry}
-                  material={materials["Path9 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[-9.73, 6.54, 15.11]}
-                  rotation={[-1.65, 0.06, 0.01]}
-                  scale={[0.62, 0.95, 1.03]}
-                />
-                <mesh
-                  name="Cube 224"
-                  geometry={nodes["Cube 224"].geometry}
-                  material={materials["Cube 224 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, 4.37, 0.63]}
-                  rotation={[-0.09, 0, 0]}
-                  scale={[1, 1.01, 0.68]}
-                />
-                <mesh
-                  name="Cube20"
-                  geometry={nodes.Cube20.geometry}
-                  material={materials["Cube20 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, -7.79, 0.65]}
-                  rotation={[0.1, 0, 0]}
-                  scale={[1, 1, 0.69]}
-                />
-              </group>
               <mesh
-                name="Polaroid Frame9"
-                geometry={nodes["Polaroid Frame9"].geometry}
-                material={materials["Polaroid Frame9 Material"]}
+                name="Cube 225"
+                geometry={nodes["Cube 225"].geometry}
+                material={materials["Cube 225 Material"]}
                 castShadow
                 receiveShadow
-                position={[-64.24, -10.71, 0]}
-                rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-                scale={1}
+                position={[0, 5.29, 0.42]}
+                rotation={[-0.08, 0, 0]}
+                scale={[1, 1.01, 0.68]}
               />
-            </group>
-            <group
-              name="9thPic"
-              position={[487.85, 4.62, 0.73]}
-              rotation={[Math.PI / 2, 0.07, 0]}
-              scale={0.35}
-            >
-              <group
-                name="Paper Clip10"
-                position={[-32.21, -1.63, -188.22]}
-                rotation={[-0.06, 0.13, 0.01]}
-                scale={[1.54, 1, 1.08]}
-              >
-                <mesh
-                  name="Path10"
-                  geometry={nodes.Path10.geometry}
-                  material={materials["Path10 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[-9.73, 6.54, 15.11]}
-                  rotation={[-1.65, 0.06, 0.01]}
-                  scale={[0.62, 0.95, 1.03]}
-                />
-                <mesh
-                  name="Cube 225"
-                  geometry={nodes["Cube 225"].geometry}
-                  material={materials["Cube 225 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, 5.29, 0.42]}
-                  rotation={[-0.08, 0, 0]}
-                  scale={[1, 1.01, 0.68]}
-                />
-                <mesh
-                  name="Cube21"
-                  geometry={nodes.Cube21.geometry}
-                  material={materials["Cube21 Material"]}
-                  castShadow
-                  receiveShadow
-                  position={[0, -7.79, 0.65]}
-                  rotation={[0.14, 0, 0]}
-                  scale={[1, 1, 0.69]}
-                />
-              </group>
               <mesh
-                name="Polaroid Frame10"
-                geometry={nodes["Polaroid Frame10"].geometry}
-                material={materials["Polaroid Frame10 Material"]}
+                name="Cube21"
+                geometry={nodes.Cube21.geometry}
+                material={materials["Cube21 Material"]}
                 castShadow
                 receiveShadow
-                position={[0, -10.71, 0]}
-                rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-                scale={1}
+                position={[0, -7.79, 0.65]}
+                rotation={[0.14, 0, 0]}
+                scale={[1, 1, 0.69]}
               />
             </group>
+            <mesh
+              name="Polaroid Frame10"
+              geometry={nodes["Polaroid Frame10"].geometry}
+              material={materials["Polaroid Frame10 Material"]}
+              castShadow
+              receiveShadow
+              position={[0, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle16"
+                geometry={nodes.Rectangle16.geometry}
+                material={createPhotoMaterial(8)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
         </group>
-        <group
-          name="BlenderLine1"
-          position={[43.45, -126.88, 0]}
-          rotation={[0, -Math.PI / 2, 0]}
-          scale={1.12}
-        >
+      </group>
+      <group
+        name="Polaroid Line1"
+        position={[8.87, 6.53, -20.07]}
+        rotation={[0, -Math.PI / 2, 0]}
+        scale={[0.38, 0.37, 0.38]}
+      >
+        <group name="BlenderLine1" position={[0, -126.88, -43.45]} scale={1.12}>
           <mesh
             name="Test1"
             geometry={nodes.Test1.geometry}
@@ -532,11 +668,7 @@ export default function PolaroidModel({ nodes, materials }) {
             scale={100}
           />
         </group>
-        <group
-          name="Polaroids on line1"
-          position={[-37.68, 14.33, -1.63]}
-          rotation={[0, -Math.PI / 2, 0]}
-        >
+        <group name="Polaroids on line1" position={[-1.63, 14.33, 37.68]}>
           <group
             name="1stPic1"
             position={[-485.26, 8.31, 0.94]}
@@ -589,7 +721,18 @@ export default function PolaroidModel({ nodes, materials }) {
               position={[0, -10.71, 0]}
               rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
               scale={1}
-            />
+            >
+              <mesh
+                name="Rectangle17"
+                geometry={nodes.Rectangle17.geometry}
+                material={createPhotoMaterial(9)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
           <group
             name="2ndPic1"
@@ -643,7 +786,18 @@ export default function PolaroidModel({ nodes, materials }) {
               position={[4.6, -14.71, 12.8]}
               rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
               scale={1}
-            />
+            >
+              <mesh
+                name="Rectangle18"
+                geometry={nodes.Rectangle18.geometry}
+                material={createPhotoMaterial(10)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
           <group
             name="3rdPic1"
@@ -697,7 +851,18 @@ export default function PolaroidModel({ nodes, materials }) {
               position={[20.46, -10.71, 0]}
               rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
               scale={1}
-            />
+            >
+              <mesh
+                name="Rectangle19"
+                geometry={nodes.Rectangle19.geometry}
+                material={createPhotoMaterial(11)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
           <group
             name="4thPic1"
@@ -751,7 +916,18 @@ export default function PolaroidModel({ nodes, materials }) {
               position={[0, -10.71, 0]}
               rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
               scale={1}
-            />
+            >
+              <mesh
+                name="Rectangle20"
+                geometry={nodes.Rectangle20.geometry}
+                material={createPhotoMaterial(12)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
           <group
             name="Center1"
@@ -805,7 +981,18 @@ export default function PolaroidModel({ nodes, materials }) {
               position={[0, -10.71, 0]}
               rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
               scale={1}
-            />
+            >
+              <mesh
+                name="Rectangle21"
+                geometry={nodes.Rectangle21.geometry}
+                material={createPhotoMaterial(13)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
           <group
             name="6thPic1"
@@ -859,7 +1046,18 @@ export default function PolaroidModel({ nodes, materials }) {
               position={[0, -10.71, 0]}
               rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
               scale={1}
-            />
+            >
+              <mesh
+                name="Rectangle22"
+                geometry={nodes.Rectangle22.geometry}
+                material={createPhotoMaterial(14)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
           <group
             name="7thPic1"
@@ -913,7 +1111,18 @@ export default function PolaroidModel({ nodes, materials }) {
               position={[0, -10.71, 0]}
               rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
               scale={1}
-            />
+            >
+              <mesh
+                name="Rectangle23"
+                geometry={nodes.Rectangle23.geometry}
+                material={createPhotoMaterial(15)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
           <group
             name="8thPic1"
@@ -967,7 +1176,18 @@ export default function PolaroidModel({ nodes, materials }) {
               position={[-64.24, -10.71, 0]}
               rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
               scale={1}
-            />
+            >
+              <mesh
+                name="Rectangle24"
+                geometry={nodes.Rectangle24.geometry}
+                material={createPhotoMaterial(16)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
           <group
             name="9thPic1"
@@ -1021,516 +1241,624 @@ export default function PolaroidModel({ nodes, materials }) {
               position={[0, -10.71, 0]}
               rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
               scale={1}
-            />
+            >
+              <mesh
+                name="Rectangle25"
+                geometry={nodes.Rectangle25.geometry}
+                material={createPhotoMaterial(17)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
         </group>
       </group>
       <group
-        name="BlenderLine2"
-        position={[43.45, -126.88, 0]}
+        name="Polaroid Line2"
+        position={[8.87, -58.64, -20.07]}
         rotation={[0, -Math.PI / 2, 0]}
-        scale={1.12}
+        scale={[0.38, 0.37, 0.38]}
       >
-        <mesh
-          name="Test2"
-          geometry={nodes.Test2.geometry}
-          material={nodes.Test2.material}
-          castShadow
-          receiveShadow
-          rotation={[-Math.PI / 2, 0, 0]}
-          scale={100}
-        />
-      </group>
-      <group
-        name="Polaroids on line2"
-        position={[-37.68, 14.33, -1.63]}
-        rotation={[0, -Math.PI / 2, 0]}
-      >
-        <group
-          name="1stPic2"
-          position={[-485.26, 8.31, 0.94]}
-          rotation={[Math.PI / 2, -0.11, 0]}
-          scale={0.35}
-        >
-          <group
-            name="Paper Clip20"
-            position={[-10.58, -1.24, -191.11]}
-            rotation={[-0.01, 0, 0]}
-            scale={[1.54, 1, 1.08]}
-          >
-            <mesh
-              name="Path20"
-              geometry={nodes.Path20.geometry}
-              material={materials["Path20 Material"]}
-              castShadow
-              receiveShadow
-              position={[-9.73, 6.54, 15.11]}
-              rotation={[-1.65, 0.06, 0.01]}
-              scale={[0.62, 0.95, 1.03]}
-            />
-            <mesh
-              name="Cube 236"
-              geometry={nodes["Cube 236"].geometry}
-              material={materials["Cube 236 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, 4.28, -0.2]}
-              rotation={[-0.09, 0, 0]}
-              scale={[1, 1.01, 0.68]}
-            />
-            <mesh
-              name="Cube31"
-              geometry={nodes.Cube31.geometry}
-              material={materials["Cube31 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, -7.79, 0.65]}
-              rotation={[0.1, 0, 0]}
-              scale={[1, 1, 0.69]}
-            />
-          </group>
+        <group name="BlenderLine2" position={[0, -126.88, -43.45]} scale={1.12}>
           <mesh
-            name="Polaroid Frame20"
-            geometry={nodes["Polaroid Frame20"].geometry}
-            material={materials["Polaroid Frame20 Material"]}
+            name="Test2"
+            geometry={nodes.Test2.geometry}
+            material={nodes.Test2.material}
             castShadow
             receiveShadow
-            position={[0, -10.71, 0]}
-            rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-            scale={1}
+            rotation={[-Math.PI / 2, 0, 0]}
+            scale={100}
           />
         </group>
-        <group
-          name="2ndPic2"
-          position={[-359.93, -11.98, 1.14]}
-          rotation={[Math.PI / 2, -0.05, 0]}
-          scale={0.35}
-        >
+        <group name="Polaroids on line2" position={[-1.63, 14.33, 37.68]}>
           <group
-            name="Paper Clip21"
-            position={[39.69, -1.2, -185.56]}
-            rotation={[0.04, -0.1, 0.01]}
-            scale={[1.54, 1, 1.08]}
+            name="1stPic2"
+            position={[-485.26, 8.31, 0.94]}
+            rotation={[Math.PI / 2, -0.11, 0]}
+            scale={0.35}
           >
+            <group
+              name="Paper Clip20"
+              position={[-10.58, -1.24, -191.11]}
+              rotation={[-0.01, 0, 0]}
+              scale={[1.54, 1, 1.08]}
+            >
+              <mesh
+                name="Path20"
+                geometry={nodes.Path20.geometry}
+                material={materials["Path20 Material"]}
+                castShadow
+                receiveShadow
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 236"
+                geometry={nodes["Cube 236"].geometry}
+                material={materials["Cube 236 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.28, -0.2]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube31"
+                geometry={nodes.Cube31.geometry}
+                material={materials["Cube31 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
+              />
+            </group>
             <mesh
-              name="Path21"
-              geometry={nodes.Path21.geometry}
-              material={materials["Path21 Material"]}
+              name="Polaroid Frame20"
+              geometry={nodes["Polaroid Frame20"].geometry}
+              material={materials["Polaroid Frame20 Material"]}
               castShadow
               receiveShadow
-              position={[-9.73, 6.54, 15.11]}
-              rotation={[-1.65, 0.06, 0.01]}
-              scale={[0.62, 0.95, 1.03]}
-            />
-            <mesh
-              name="Cube 237"
-              geometry={nodes["Cube 237"].geometry}
-              material={materials["Cube 237 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, 4.28, -0.2]}
-              rotation={[-0.09, 0, 0]}
-              scale={[1, 1.01, 0.68]}
-            />
-            <mesh
-              name="Cube32"
-              geometry={nodes.Cube32.geometry}
-              material={materials["Cube32 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, -7.79, 0.65]}
-              rotation={[0.1, 0, 0]}
-              scale={[1, 1, 0.69]}
-            />
+              position={[0, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle26"
+                geometry={nodes.Rectangle26.geometry}
+                material={createPhotoMaterial(18)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
-          <mesh
-            name="Polaroid Frame21"
-            geometry={nodes["Polaroid Frame21"].geometry}
-            material={materials["Polaroid Frame21 Material"]}
-            castShadow
-            receiveShadow
-            position={[4.6, -14.71, 12.8]}
-            rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-            scale={1}
-          />
-        </group>
-        <group
-          name="3rdPic2"
-          position={[-241.96, -28.44, 0.83]}
-          rotation={[Math.PI / 2, -0.05, 0]}
-          scale={0.35}
-        >
           <group
-            name="Paper Clip22"
-            position={[20.5, -0.7, -190.22]}
-            rotation={[-0.01, 0.14, 0]}
-            scale={[1.54, 1, 1.08]}
+            name="2ndPic2"
+            position={[-359.93, -11.98, 1.14]}
+            rotation={[Math.PI / 2, -0.05, 0]}
+            scale={0.35}
           >
+            <group
+              name="Paper Clip21"
+              position={[39.69, -1.2, -185.56]}
+              rotation={[0.04, -0.1, 0.01]}
+              scale={[1.54, 1, 1.08]}
+            >
+              <mesh
+                name="Path21"
+                geometry={nodes.Path21.geometry}
+                material={materials["Path21 Material"]}
+                castShadow
+                receiveShadow
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 237"
+                geometry={nodes["Cube 237"].geometry}
+                material={materials["Cube 237 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.28, -0.2]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube32"
+                geometry={nodes.Cube32.geometry}
+                material={materials["Cube32 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
+              />
+            </group>
             <mesh
-              name="Path22"
-              geometry={nodes.Path22.geometry}
-              material={materials["Path22 Material"]}
+              name="Polaroid Frame21"
+              geometry={nodes["Polaroid Frame21"].geometry}
+              material={materials["Polaroid Frame21 Material"]}
               castShadow
               receiveShadow
-              position={[-9.73, 6.54, 15.11]}
-              rotation={[-1.65, 0.06, 0.01]}
-              scale={[0.62, 0.95, 1.03]}
-            />
-            <mesh
-              name="Cube 238"
-              geometry={nodes["Cube 238"].geometry}
-              material={materials["Cube 238 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, 4.79, -0.24]}
-              rotation={[-0.09, 0, 0]}
-              scale={[1, 1.01, 0.68]}
-            />
-            <mesh
-              name="Cube33"
-              geometry={nodes.Cube33.geometry}
-              material={materials["Cube33 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, -7.79, 0.65]}
-              rotation={[0.1, 0, 0]}
-              scale={[1, 1, 0.69]}
-            />
+              position={[4.6, -14.71, 12.8]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle27"
+                geometry={nodes.Rectangle27.geometry}
+                material={createPhotoMaterial(19)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
-          <mesh
-            name="Polaroid Frame22"
-            geometry={nodes["Polaroid Frame22"].geometry}
-            material={materials["Polaroid Frame22 Material"]}
-            castShadow
-            receiveShadow
-            position={[20.46, -10.71, 0]}
-            rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-            scale={1}
-          />
-        </group>
-        <group
-          name="4thPic2"
-          position={[-113.38, -34.01, 1.4]}
-          rotation={[Math.PI / 2, 0.02, 0]}
-          scale={0.35}
-        >
           <group
-            name="Paper Clip23"
-            position={[-10.58, -1.24, -191.11]}
-            rotation={[-0.01, -0.05, 0]}
-            scale={[1.54, 1, 1.08]}
+            name="3rdPic2"
+            position={[-241.96, -28.44, 0.83]}
+            rotation={[Math.PI / 2, -0.05, 0]}
+            scale={0.35}
           >
+            <group
+              name="Paper Clip22"
+              position={[20.5, -0.7, -190.22]}
+              rotation={[-0.01, 0.14, 0]}
+              scale={[1.54, 1, 1.08]}
+            >
+              <mesh
+                name="Path22"
+                geometry={nodes.Path22.geometry}
+                material={materials["Path22 Material"]}
+                castShadow
+                receiveShadow
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 238"
+                geometry={nodes["Cube 238"].geometry}
+                material={materials["Cube 238 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.79, -0.24]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube33"
+                geometry={nodes.Cube33.geometry}
+                material={materials["Cube33 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
+              />
+            </group>
             <mesh
-              name="Path23"
-              geometry={nodes.Path23.geometry}
-              material={materials["Path23 Material"]}
+              name="Polaroid Frame22"
+              geometry={nodes["Polaroid Frame22"].geometry}
+              material={materials["Polaroid Frame22 Material"]}
               castShadow
               receiveShadow
-              position={[-9.73, 6.54, 15.11]}
-              rotation={[-1.65, 0.06, 0.01]}
-              scale={[0.62, 0.95, 1.03]}
-            />
-            <mesh
-              name="Cube 239"
-              geometry={nodes["Cube 239"].geometry}
-              material={materials["Cube 239 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, 4.28, -0.2]}
-              rotation={[-0.09, 0, 0]}
-              scale={[1, 1.01, 0.68]}
-            />
-            <mesh
-              name="Cube34"
-              geometry={nodes.Cube34.geometry}
-              material={materials["Cube34 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, -7.79, 0.65]}
-              rotation={[0.1, 0, 0]}
-              scale={[1, 1, 0.69]}
-            />
+              position={[20.46, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle28"
+                geometry={nodes.Rectangle28.geometry}
+                material={createPhotoMaterial(20)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
-          <mesh
-            name="Polaroid Frame23"
-            geometry={nodes["Polaroid Frame23"].geometry}
-            material={materials["Polaroid Frame23 Material"]}
-            castShadow
-            receiveShadow
-            position={[0, -10.71, 0]}
-            rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-            scale={1}
-          />
-        </group>
-        <group
-          name="Center2"
-          position={[-1.34, -39.96, 1.25]}
-          rotation={[Math.PI / 2, 0.01, 0]}
-          scale={0.35}
-        >
           <group
-            name="Paper Clip24"
-            position={[12.53, -1.33, -202.7]}
-            rotation={[-0.01, -0.09, 0]}
-            scale={[1.54, 1, 1.08]}
+            name="4thPic2"
+            position={[-113.38, -34.01, 1.4]}
+            rotation={[Math.PI / 2, 0.02, 0]}
+            scale={0.35}
           >
+            <group
+              name="Paper Clip23"
+              position={[-10.58, -1.24, -191.11]}
+              rotation={[-0.01, -0.05, 0]}
+              scale={[1.54, 1, 1.08]}
+            >
+              <mesh
+                name="Path23"
+                geometry={nodes.Path23.geometry}
+                material={materials["Path23 Material"]}
+                castShadow
+                receiveShadow
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 239"
+                geometry={nodes["Cube 239"].geometry}
+                material={materials["Cube 239 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.28, -0.2]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube34"
+                geometry={nodes.Cube34.geometry}
+                material={materials["Cube34 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
+              />
+            </group>
             <mesh
-              name="Path24"
-              geometry={nodes.Path24.geometry}
-              material={materials["Path24 Material"]}
+              name="Polaroid Frame23"
+              geometry={nodes["Polaroid Frame23"].geometry}
+              material={materials["Polaroid Frame23 Material"]}
               castShadow
               receiveShadow
-              position={[-9.73, 6.54, 15.11]}
-              rotation={[-1.65, 0.06, 0.01]}
-              scale={[0.62, 0.95, 1.03]}
-            />
-            <mesh
-              name="Cube 240"
-              geometry={nodes["Cube 240"].geometry}
-              material={materials["Cube 240 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, 4.28, -0.2]}
-              rotation={[-0.09, 0, 0]}
-              scale={[1, 1.01, 0.68]}
-            />
-            <mesh
-              name="Cube35"
-              geometry={nodes.Cube35.geometry}
-              material={materials["Cube35 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, -7.79, 0.65]}
-              rotation={[0.1, 0, 0]}
-              scale={[1, 1, 0.69]}
-            />
+              position={[0, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle29"
+                geometry={nodes.Rectangle29.geometry}
+                material={createPhotoMaterial(21)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
-          <mesh
-            name="Polaroid Frame24"
-            geometry={nodes["Polaroid Frame24"].geometry}
-            material={materials["Polaroid Frame24 Material"]}
-            castShadow
-            receiveShadow
-            position={[0, -10.71, 0]}
-            rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-            scale={1}
-          />
-        </group>
-        <group
-          name="6thPic2"
-          position={[127.4, -36.86, 1.2]}
-          rotation={[Math.PI / 2, 0.09, 0]}
-          scale={0.35}
-        >
           <group
-            name="Paper Clip25"
-            position={[2.29, -1.25, -192.35]}
-            rotation={[-0.01, 0.1, 0]}
-            scale={[1.54, 1, 1.08]}
+            name="Center2"
+            position={[-1.34, -39.96, 1.25]}
+            rotation={[Math.PI / 2, 0.01, 0]}
+            scale={0.35}
           >
+            <group
+              name="Paper Clip24"
+              position={[12.53, -1.33, -202.7]}
+              rotation={[-0.01, -0.09, 0]}
+              scale={[1.54, 1, 1.08]}
+            >
+              <mesh
+                name="Path24"
+                geometry={nodes.Path24.geometry}
+                material={materials["Path24 Material"]}
+                castShadow
+                receiveShadow
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 240"
+                geometry={nodes["Cube 240"].geometry}
+                material={materials["Cube 240 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.28, -0.2]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube35"
+                geometry={nodes.Cube35.geometry}
+                material={materials["Cube35 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
+              />
+            </group>
             <mesh
-              name="Path25"
-              geometry={nodes.Path25.geometry}
-              material={materials["Path25 Material"]}
+              name="Polaroid Frame24"
+              geometry={nodes["Polaroid Frame24"].geometry}
+              material={materials["Polaroid Frame24 Material"]}
               castShadow
               receiveShadow
-              position={[-9.73, 6.54, 15.11]}
-              rotation={[-1.65, 0.06, 0.01]}
-              scale={[0.62, 0.95, 1.03]}
-            />
-            <mesh
-              name="Cube 241"
-              geometry={nodes["Cube 241"].geometry}
-              material={materials["Cube 241 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, 4.28, -0.2]}
-              rotation={[-0.09, 0, 0]}
-              scale={[1, 1.01, 0.68]}
-            />
-            <mesh
-              name="Cube36"
-              geometry={nodes.Cube36.geometry}
-              material={materials["Cube36 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, -7.79, 0.65]}
-              rotation={[0.1, 0, 0]}
-              scale={[1, 1, 0.69]}
-            />
+              position={[0, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle30"
+                geometry={nodes.Rectangle30.geometry}
+                material={createPhotoMaterial(22)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
-          <mesh
-            name="Polaroid Frame25"
-            geometry={nodes["Polaroid Frame25"].geometry}
-            material={materials["Polaroid Frame25 Material"]}
-            castShadow
-            receiveShadow
-            position={[0, -10.71, 0]}
-            rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-            scale={1}
-          />
-        </group>
-        <group
-          name="7thPic2"
-          position={[245.02, -32.51, 1.16]}
-          rotation={[Math.PI / 2, 0.12, 0]}
-          scale={0.35}
-        >
           <group
-            name="Paper Clip26"
-            position={[11.79, -1.24, -191.11]}
-            rotation={[-0.01, 0, 0]}
-            scale={[1.54, 1, 1.08]}
+            name="6thPic2"
+            position={[127.4, -36.86, 1.2]}
+            rotation={[Math.PI / 2, 0.09, 0]}
+            scale={0.35}
           >
+            <group
+              name="Paper Clip25"
+              position={[2.29, -1.25, -192.35]}
+              rotation={[-0.01, 0.1, 0]}
+              scale={[1.54, 1, 1.08]}
+            >
+              <mesh
+                name="Path25"
+                geometry={nodes.Path25.geometry}
+                material={materials["Path25 Material"]}
+                castShadow
+                receiveShadow
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 241"
+                geometry={nodes["Cube 241"].geometry}
+                material={materials["Cube 241 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.28, -0.2]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube36"
+                geometry={nodes.Cube36.geometry}
+                material={materials["Cube36 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
+              />
+            </group>
             <mesh
-              name="Path26"
-              geometry={nodes.Path26.geometry}
-              material={materials["Path26 Material"]}
+              name="Polaroid Frame25"
+              geometry={nodes["Polaroid Frame25"].geometry}
+              material={materials["Polaroid Frame25 Material"]}
               castShadow
               receiveShadow
-              position={[-9.73, 6.54, 15.11]}
-              rotation={[-1.65, 0.06, 0.01]}
-              scale={[0.62, 0.95, 1.03]}
-            />
-            <mesh
-              name="Cube 242"
-              geometry={nodes["Cube 242"].geometry}
-              material={materials["Cube 242 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, 4.28, -0.2]}
-              rotation={[-0.09, 0, 0]}
-              scale={[1, 1.01, 0.68]}
-            />
-            <mesh
-              name="Cube37"
-              geometry={nodes.Cube37.geometry}
-              material={materials["Cube37 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, -7.79, 0.65]}
-              rotation={[0.1, 0, 0]}
-              scale={[1, 1, 0.69]}
-            />
+              position={[0, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle31"
+                geometry={nodes.Rectangle31.geometry}
+                material={createPhotoMaterial(23)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
-          <mesh
-            name="Polaroid Frame26"
-            geometry={nodes["Polaroid Frame26"].geometry}
-            material={materials["Polaroid Frame26 Material"]}
-            castShadow
-            receiveShadow
-            position={[0, -10.71, 0]}
-            rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-            scale={1}
-          />
-        </group>
-        <group
-          name="8thPic2"
-          position={[386.32, -16.01, 0.86]}
-          rotation={[Math.PI / 2, 0.04, 0]}
-          scale={0.35}
-        >
           <group
-            name="Paper Clip27"
-            position={[-50.67, -1.28, -194.67]}
-            rotation={[-0.01, -0.16, 0]}
-            scale={[1.54, 1, 1.08]}
+            name="7thPic2"
+            position={[245.02, -32.51, 1.16]}
+            rotation={[Math.PI / 2, 0.12, 0]}
+            scale={0.35}
           >
+            <group
+              name="Paper Clip26"
+              position={[11.79, -1.24, -191.11]}
+              rotation={[-0.01, 0, 0]}
+              scale={[1.54, 1, 1.08]}
+            >
+              <mesh
+                name="Path26"
+                geometry={nodes.Path26.geometry}
+                material={materials["Path26 Material"]}
+                castShadow
+                receiveShadow
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 242"
+                geometry={nodes["Cube 242"].geometry}
+                material={materials["Cube 242 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.28, -0.2]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube37"
+                geometry={nodes.Cube37.geometry}
+                material={materials["Cube37 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
+              />
+            </group>
             <mesh
-              name="Path27"
-              geometry={nodes.Path27.geometry}
-              material={materials["Path27 Material"]}
+              name="Polaroid Frame26"
+              geometry={nodes["Polaroid Frame26"].geometry}
+              material={materials["Polaroid Frame26 Material"]}
               castShadow
               receiveShadow
-              position={[-9.73, 6.54, 15.11]}
-              rotation={[-1.65, 0.06, 0.01]}
-              scale={[0.62, 0.95, 1.03]}
-            />
-            <mesh
-              name="Cube 243"
-              geometry={nodes["Cube 243"].geometry}
-              material={materials["Cube 243 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, 4.37, 0.63]}
-              rotation={[-0.09, 0, 0]}
-              scale={[1, 1.01, 0.68]}
-            />
-            <mesh
-              name="Cube38"
-              geometry={nodes.Cube38.geometry}
-              material={materials["Cube38 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, -7.79, 0.65]}
-              rotation={[0.1, 0, 0]}
-              scale={[1, 1, 0.69]}
-            />
+              position={[0, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle32"
+                geometry={nodes.Rectangle32.geometry}
+                material={createPhotoMaterial(24)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
-          <mesh
-            name="Polaroid Frame27"
-            geometry={nodes["Polaroid Frame27"].geometry}
-            material={materials["Polaroid Frame27 Material"]}
-            castShadow
-            receiveShadow
-            position={[-64.24, -10.71, 0]}
-            rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-            scale={1}
-          />
-        </group>
-        <group
-          name="9thPic2"
-          position={[487.85, 4.62, 0.73]}
-          rotation={[Math.PI / 2, 0.07, 0]}
-          scale={0.35}
-        >
           <group
-            name="Paper Clip28"
-            position={[-32.21, -1.63, -188.22]}
-            rotation={[-0.06, 0.13, 0.01]}
-            scale={[1.54, 1, 1.08]}
+            name="8thPic2"
+            position={[386.32, -16.01, 0.86]}
+            rotation={[Math.PI / 2, 0.04, 0]}
+            scale={0.35}
           >
+            <group
+              name="Paper Clip27"
+              position={[-50.67, -1.28, -194.67]}
+              rotation={[-0.01, -0.16, 0]}
+              scale={[1.54, 1, 1.08]}
+            >
+              <mesh
+                name="Path27"
+                geometry={nodes.Path27.geometry}
+                material={materials["Path27 Material"]}
+                castShadow
+                receiveShadow
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 243"
+                geometry={nodes["Cube 243"].geometry}
+                material={materials["Cube 243 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 4.37, 0.63]}
+                rotation={[-0.09, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube38"
+                geometry={nodes.Cube38.geometry}
+                material={materials["Cube38 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.1, 0, 0]}
+                scale={[1, 1, 0.69]}
+              />
+            </group>
             <mesh
-              name="Path28"
-              geometry={nodes.Path28.geometry}
-              material={materials["Path28 Material"]}
+              name="Polaroid Frame27"
+              geometry={nodes["Polaroid Frame27"].geometry}
+              material={materials["Polaroid Frame27 Material"]}
               castShadow
               receiveShadow
-              position={[-9.73, 6.54, 15.11]}
-              rotation={[-1.65, 0.06, 0.01]}
-              scale={[0.62, 0.95, 1.03]}
-            />
-            <mesh
-              name="Cube 244"
-              geometry={nodes["Cube 244"].geometry}
-              material={materials["Cube 244 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, 5.29, 0.42]}
-              rotation={[-0.08, 0, 0]}
-              scale={[1, 1.01, 0.68]}
-            />
-            <mesh
-              name="Cube39"
-              geometry={nodes.Cube39.geometry}
-              material={materials["Cube39 Material"]}
-              castShadow
-              receiveShadow
-              position={[0, -7.79, 0.65]}
-              rotation={[0.14, 0, 0]}
-              scale={[1, 1, 0.69]}
-            />
+              position={[-64.24, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle33"
+                geometry={nodes.Rectangle33.geometry}
+                material={createPhotoMaterial(25)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
           </group>
-          <mesh
-            name="Polaroid Frame28"
-            geometry={nodes["Polaroid Frame28"].geometry}
-            material={materials["Polaroid Frame28 Material"]}
-            castShadow
-            receiveShadow
-            position={[0, -10.71, 0]}
-            rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-            scale={1}
-          />
+          <group
+            name="9thPic2"
+            position={[487.85, 4.62, 0.73]}
+            rotation={[Math.PI / 2, 0.07, 0]}
+            scale={0.35}
+          >
+            <group
+              name="Paper Clip28"
+              position={[-32.21, -1.63, -188.22]}
+              rotation={[-0.06, 0.13, 0.01]}
+              scale={[1.54, 1, 1.08]}
+            >
+              <mesh
+                name="Path28"
+                geometry={nodes.Path28.geometry}
+                material={materials["Path28 Material"]}
+                castShadow
+                receiveShadow
+                position={[-9.73, 6.54, 15.11]}
+                rotation={[-1.65, 0.06, 0.01]}
+                scale={[0.62, 0.95, 1.03]}
+              />
+              <mesh
+                name="Cube 244"
+                geometry={nodes["Cube 244"].geometry}
+                material={materials["Cube 244 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, 5.29, 0.42]}
+                rotation={[-0.08, 0, 0]}
+                scale={[1, 1.01, 0.68]}
+              />
+              <mesh
+                name="Cube39"
+                geometry={nodes.Cube39.geometry}
+                material={materials["Cube39 Material"]}
+                castShadow
+                receiveShadow
+                position={[0, -7.79, 0.65]}
+                rotation={[0.14, 0, 0]}
+                scale={[1, 1, 0.69]}
+              />
+            </group>
+            <mesh
+              name="Polaroid Frame28"
+              geometry={nodes["Polaroid Frame28"].geometry}
+              material={materials["Polaroid Frame28 Material"]}
+              castShadow
+              receiveShadow
+              position={[0, -10.71, 0]}
+              rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+              scale={1}
+            >
+              <mesh
+                name="Rectangle34"
+                geometry={nodes.Rectangle34.geometry}
+                material={createPhotoMaterial(26)}
+                castShadow
+                receiveShadow
+                position={[-21.5, 0, 21.93]}
+                rotation={[0, 0, 0]}
+                scale={1}
+              />
+            </mesh>
+          </group>
         </group>
       </group>
     </group>

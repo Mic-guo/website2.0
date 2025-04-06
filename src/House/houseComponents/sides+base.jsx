@@ -4,8 +4,8 @@ export default function SidesBase({ nodes }) {
   return (
     <group name="Sides + base" position={[39.23, 2427.88, 306.66]}>
       <mesh
-        name="Rectangle1"
-        geometry={nodes.Rectangle1.geometry}
+        name="Rectangle2"
+        geometry={nodes.Rectangle2.geometry}
         castShadow
         receiveShadow
         position={[-29.61, -1009.82, 0]}

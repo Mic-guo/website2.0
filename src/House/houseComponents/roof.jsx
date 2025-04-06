@@ -80,8 +80,8 @@ const Roof = forwardRef(({ nodes }, ref) => {
       </mesh>
       <group name="Roof vent" position={[-82.04, 127.32, -242.9]}>
         <mesh
-          name="Rectangle"
-          geometry={nodes.Rectangle.geometry}
+          name="Rectangle1"
+          geometry={nodes.Rectangle1.geometry}
           // castShadow
           receiveShadow
           position={[0.34, 68.32, -0.32]}

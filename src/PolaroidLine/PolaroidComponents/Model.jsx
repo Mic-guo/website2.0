@@ -79,8 +79,6 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
     materialRef.current = new THREE.MeshStandardMaterial({
       map: texture,
       side: THREE.DoubleSide,
-      roughness: 0.2,
-      metalness: 0.2,
     });
 
     // Apply material and improvements

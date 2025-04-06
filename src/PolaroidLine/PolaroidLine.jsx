@@ -150,7 +150,7 @@ function PolaroidLine() {
                 physicsWorld={physicsWorldRef.current}
                 yOffset={yOffset}
                 ropeIndex={ropeIndex}
-                modelPerRope={7}
+                modelPerRope={9}
               />
             ))}
           </>

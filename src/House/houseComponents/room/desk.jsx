@@ -838,8 +838,8 @@ export default function Desk({ nodes, materials }) {
             position={[0, 4.1, 44.19]}
           />
           <mesh
-            name="Rectangle2"
-            geometry={nodes.Rectangle2.geometry}
+            name="Rectangle3"
+            geometry={nodes.Rectangle3.geometry}
             material={materials.pink}
             castShadow
             receiveShadow
@@ -892,8 +892,8 @@ export default function Desk({ nodes, materials }) {
             scale={1}
           />
           <mesh
-            name="Rectangle3"
-            geometry={nodes.Rectangle3.geometry}
+            name="Rectangle4"
+            geometry={nodes.Rectangle4.geometry}
             material={materials.Metal}
             castShadow
             receiveShadow
@@ -936,8 +936,8 @@ export default function Desk({ nodes, materials }) {
             scale={1}
           />
           <mesh
-            name="Rectangle4"
-            geometry={nodes.Rectangle4.geometry}
+            name="Rectangle5"
+            geometry={nodes.Rectangle5.geometry}
             material={materials.Metal}
             castShadow
             receiveShadow

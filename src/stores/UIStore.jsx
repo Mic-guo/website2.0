@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 const useUIStore = create((set) => ({
-  isNightMode: false,
+  isNightMode: true,
   isCursorTextVisible: true,
   isLandingPageVisible: true,
   isZoomedIn: false,

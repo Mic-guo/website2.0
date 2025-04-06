@@ -34,9 +34,9 @@ export default function Bookshelf({ nodes, materials }) {
           scale={[0.1, 0.12, 0.1]}
         >
           <mesh
-            name="Rectangle6"
-            geometry={nodes.Rectangle6.geometry}
-            material={materials["Rectangle6 Material"]}
+            name="Rectangle7"
+            geometry={nodes.Rectangle7.geometry}
+            material={materials["Rectangle7 Material"]}
             castShadow
             receiveShadow
             position={[-0.71, 31.69, -78.32]}

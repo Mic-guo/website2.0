@@ -1,9 +1,5 @@
 import { create } from "zustand";
 
-const ROPES_COUNT = 3;
-const MODELS_PER_ROPE = 7;
-const TOTAL_MODELS = ROPES_COUNT * MODELS_PER_ROPE;
-
 export const useLoadingStore = create((set) => ({
   target: null,
   totalProgress: 0,

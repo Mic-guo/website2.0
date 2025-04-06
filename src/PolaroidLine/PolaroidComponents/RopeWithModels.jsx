@@ -11,8 +11,7 @@ import { Rope } from "./Rope";
 import polaroidModel from "../models/polaroid_with_material.glb";
 import { useLoadingStore } from "../stores/loadingStore";
 
-// Generate image paths for all images (1-15)
-const TOTAL_IMAGES = 15;
+const TOTAL_IMAGES = 27;
 const images = Object.fromEntries(
   Array.from({ length: TOTAL_IMAGES }, (_, i) => {
     const num = i + 1;
