@@ -7,6 +7,7 @@ const useUIStore = create((set) => ({
   isZoomedIn: false,
   cameraAnimation: null,
   fromPolaroid: false,
+  isTVModalOpen: false,
 
   setIsNightMode: (isNightMode) => set({ isNightMode }),
   setIsCursorTextVisible: (isCursorTextVisible) => set({ isCursorTextVisible }),
@@ -15,6 +16,7 @@ const useUIStore = create((set) => ({
   setCameraAnimation: (cameraAnimation) => set({ cameraAnimation }),
   setIsZoomedIn: (isZoomedIn) => set({ isZoomedIn }),
   setFromPolaroid: (fromPolaroid) => set({ fromPolaroid }),
+  setIsTVModalOpen: (isTVModalOpen) => set({ isTVModalOpen }),
 }));
 
 export default useUIStore;

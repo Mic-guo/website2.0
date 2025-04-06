@@ -1,9 +1,11 @@
 import { forwardRef, useEffect } from "react";
 import useHoverStore from "../../../../stores/hoverStore";
+import useUIStore from "../../../../stores/UIStore";
 import gsap from "gsap";
 
 const Tv = forwardRef(function Tv({ nodes, materials }, ref) {
   const { hoveredItem } = useHoverStore();
+  const { setIsTVModalOpen } = useUIStore();
   const isHovered = hoveredItem === "tv";
 
   useEffect(() => {
@@ -24,6 +26,10 @@ const Tv = forwardRef(function Tv({ nodes, materials }, ref) {
       name="tv"
       position={[0, 159.25, 2.52]}
       scale={[1.31, 1.18, 1.31]}
+      onClick={(e) => {
+        e.stopPropagation();
+        setIsTVModalOpen(true);
+      }}
     >
       <mesh
         name="Text1"
