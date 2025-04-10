@@ -2,11 +2,9 @@ import { useRef, useEffect, useCallback } from "react";
 import { gsap } from "gsap";
 import { TextPlugin } from "gsap/TextPlugin";
 import { useTheme } from "./context/ThemeContext";
-import { useNavigate } from "react-router-dom";
 import SocialLink from "./components/SocialLink";
 import CursorText from "./components/CursorText";
 import House from "./House/House";
-import useStateStore from "./stores/stateStore";
 import NightModeToggle from "./components/NightModeToggle";
 import useUIStore from "./stores/UIStore";
 import useNavigationHandler from "./components/controllers/navigationHandler";
@@ -90,13 +88,20 @@ const LandingPage = () => {
   return (
     <>
       <div
-        ref={houseWrapperRef}
-        className={`fixed filter ${
-          fromPolaroid ? "blur-0" : "blur-2xl"
-        } cursor-none`}
+        className="fixed cursor-none"
+        // className={`fixed filter ${
+        //   fromPolaroid ? "blur-0" : "blur-2xl"
+        // } cursor-none`}
       >
         <House />
+        <div
+          ref={houseWrapperRef}
+          className={`w-screen h-screen pointer-events-none ${
+            fromPolaroid ? "backdrop-blur-0" : "backdrop-blur-2xl"
+          }`}
+        />
       </div>
+
       {!isLandingPageVisible && (
         <button
           onClick={handleExitNavigationState}

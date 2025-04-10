@@ -76,7 +76,7 @@ export default function navigationHandler(getRefsForState) {
       onComplete: () => {
         setIsLandingPageVisible(false);
         gsap.to(houseWrapperRef.current, {
-          filter: "blur(0px)",
+          backdropFilter: "blur(0px)",
           duration: 0.5,
         });
       },
@@ -91,7 +91,7 @@ export default function navigationHandler(getRefsForState) {
     setIsLandingPageVisible(true);
     requestAnimationFrame(() => {
       gsap.to(houseWrapperRef.current, {
-        filter: "blur(40px)",
+        backdropFilter: "blur(40px)",
         duration: 0.5,
       });
 
@@ -112,12 +112,9 @@ export default function navigationHandler(getRefsForState) {
     navigate("/");
   };
 
-  const enterProjects = () => {
-    
-  };
+  const enterProjects = () => {};
 
-  const exitProjects = () => {
-  };
+  const exitProjects = () => {};
 
   // If there is no previous state, set the current state to the first state? or maybe set to the zoomed in house state
   // For example, reloading on /polaroid/ would have no previous state i think

@@ -11,7 +11,7 @@ import useUIStore from "../../stores/UIStore";
 
 export function CameraZoomController() {
   const { camera } = useThree();
-  const { isZoomedIn, cameraAnimation, fromPolaroid } = useUIStore();
+  const { isZoomedIn, cameraAnimation } = useUIStore();
 
   useEffect(() => {
     if (cameraAnimation === null) return;
@@ -26,7 +26,7 @@ export function CameraZoomController() {
           x: targetX,
           y: targetY + CAMERA_ANIMATION_OFFSET.y,
           z: targetZ + CAMERA_ANIMATION_OFFSET.z,
-          duration: 4,
+          duration: 3,
           ease: "power2.inOut",
         });
         break;
@@ -35,7 +35,7 @@ export function CameraZoomController() {
           x: targetX,
           y: targetY,
           z: targetZ,
-          duration: 4,
+          duration: 2,
           ease: "power2.inOut",
         });
         break;
@@ -52,18 +52,11 @@ export function CameraZoomController() {
         break;
     }
 
-    // Calculate zoom based on screen size
-    const baseZoom = isZoomedIn ? 0.4 : 0.1;
-    const aspectRatio = window.innerWidth / window.innerHeight;
-    const referenceWidth = 1920; // Reference width for base zoom
-    const scaleFactorWidth = window.innerWidth / referenceWidth;
-
-    // Scale zoom based on screen width, but with some constraints
-    const scaledZoom =
-      baseZoom * Math.min(Math.max(scaleFactorWidth, 0.7), 1.4);
+    // Use fixed zoom values instead of calculated ones
+    const fixedZoom = isZoomedIn ? 0.4 : 0.1;
 
     gsap.to(camera, {
-      zoom: scaledZoom,
+      zoom: fixedZoom,
       duration: 1.5,
       ease: "power2.inOut",
       onUpdate: () => {
@@ -71,22 +64,6 @@ export function CameraZoomController() {
       },
     });
   }, [isZoomedIn, cameraAnimation, camera]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const baseZoom = isZoomedIn ? 0.4 : 0.1;
-      const referenceWidth = 1920;
-      const scaleFactorWidth = window.innerWidth / referenceWidth;
-      const scaledZoom =
-        baseZoom * Math.min(Math.max(scaleFactorWidth, 0.7), 1.3);
-
-      camera.zoom = scaledZoom;
-      camera.updateProjectionMatrix();
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [camera, isZoomedIn]);
 
   return null;
 }
