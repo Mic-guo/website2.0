@@ -1,9 +1,7 @@
 import useSpline from "@splinetool/r3f-spline";
-import { useFrame } from "@react-three/fiber";
-import { useRef, useState, useEffect } from "react";
-import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
+import { useFrame, useLoader } from "@react-three/fiber";
+import { Suspense, useCallback, useRef, useEffect } from "react";
+import { TextureLoader } from "three";
 import sceneFile from "../House/scene.splinecode?url";
 import Roof from "./houseComponents/roof";
 import SidesBase from "./houseComponents/sides+base";
@@ -19,94 +17,106 @@ import gsap from "gsap";
 import { CameraZoomController } from "../components/controllers/CameraZoomController";
 import useUIStore from "../stores/UIStore";
 import useNavigationHandler from "../components/controllers/navigationHandler";
-import PolaroidModel from "./houseComponents/room/polaroidModel";
+import PolaroidModel, {
+  POLAROID_PATHS,
+} from "./houseComponents/room/polaroidModel";
+
+// Names of objects in the spline scene that count as discrete hover targets
+// when the camera is zoomed in. Everything else falls back to "house" hover
+// (or no hover at all) depending on zoom state.
+const ZOOMED_HOVER_TARGETS = ["tv", "Polaroid"];
 
 export default function Scene({ ...props }) {
   const { nodes, materials } = useSpline(sceneFile);
-  const [hasMouseMoved, setHasMouseMoved] = useState(false);
 
   const groupRef = useRef();
   const scaleRef = useRef(1);
   const roofRef = useRef();
+  // Track which name we last pushed to the store so we don't dispatch the
+  // same value on every pointer-move tick.
+  const lastHoverRef = useRef(null);
 
   const { setHoveredItem, clearHover, hoveredItem } = useHoverStore();
   const { isNightMode, isZoomedIn } = useUIStore();
   const { handleEnterNavigationState } = useNavigationHandler();
 
-  // Set up raycaster
-  const raycaster = new THREE.Raycaster();
-  const mouse = new THREE.Vector2();
+  const pushHover = useCallback(
+    (id) => {
+      if (lastHoverRef.current === id) return;
+      lastHoverRef.current = id;
+      if (id) setHoveredItem(id);
+      else clearHover();
+    },
+    [setHoveredItem, clearHover]
+  );
 
-  useFrame(({ camera, pointer }) => {
-    // Only start raycasting after mouse has moved
-    if (!hasMouseMoved) {
-      if (pointer.x !== 0 || pointer.y !== 0) {
-        setHasMouseMoved(true);
-      }
-      if (hoveredItem) {
-        clearHover();
-      }
-      return;
-    }
-
-    // Update mouse position
-    mouse.set(pointer.x, pointer.y);
-
-    // Update the raycaster
-    raycaster.setFromCamera(mouse, camera);
-
-    if (groupRef.current) {
-      // First, check house hover when not zoomed in
+  // R3F handles raycasting once per pointer event (and only against meshes
+  // that have handlers attached), instead of the previous approach of walking
+  // the entire scene graph every frame inside useFrame.
+  const handlePointerMove = useCallback(
+    (e) => {
+      e.stopPropagation();
       if (!isZoomedIn) {
-        const houseIntersects = raycaster.intersectObject(
-          groupRef.current,
-          true
-        );
-
-        if (houseIntersects.length > 0 && !hoveredItem) {
-          setHoveredItem("house");
-        } else if (houseIntersects.length === 0 && hoveredItem) {
-          clearHover();
-        }
+        pushHover("house");
+        return;
       }
-
-      // Then, check component hovers when zoomed in
-      if (isZoomedIn) {
-        // Get all interactive components
-        const tvComponent = groupRef.current.getObjectByName("tv");
-        const polaroidComponent = groupRef.current.getObjectByName("Polaroid");
-
-        const componentIntersects = raycaster.intersectObjects(
-          [tvComponent, polaroidComponent],
-          true
-        );
-
-        if (componentIntersects.length > 0) {
-          const closestIntersect = componentIntersects[0];
-
-          // Traverse up the parent chain to find the named component
-          let currentObject = closestIntersect.object;
-          while (
-            currentObject &&
-            !["tv", "Polaroid"].includes(currentObject.name)
-          ) {
-            currentObject = currentObject.parent;
-          }
-          if (currentObject) {
-            const componentId = currentObject.name.toLowerCase();
-            setHoveredItem(componentId);
-          }
-        } else {
-          clearHover();
-        }
+      // Zoomed in: only TV and Polaroid count as hover targets. Walk up from
+      // the hit mesh to find the named ancestor.
+      let cur = e.object;
+      while (cur && !ZOOMED_HOVER_TARGETS.includes(cur.name)) {
+        cur = cur.parent;
       }
+      pushHover(cur ? cur.name.toLowerCase() : null);
+    },
+    [isZoomedIn, pushHover]
+  );
 
-      // Update house scale animation regardless of zoom state
-      const targetScale = hoveredItem === "house" && !isZoomedIn ? 1.04 : 1;
-      scaleRef.current += (targetScale - scaleRef.current) * 0.1;
-      groupRef.current.scale.setScalar(scaleRef.current);
-    }
+  const handlePointerOut = useCallback(
+    (e) => {
+      // Only clear when the pointer leaves the whole house group, not when
+      // it crosses between two child meshes (R3F bubbles those too).
+      if (e.intersections && e.intersections.length > 0) return;
+      pushHover(null);
+    },
+    [pushHover]
+  );
+
+  // Smooth scale animation when the (outer) house is hovered. This is the
+  // only thing left in useFrame — it's a single lerp + setScalar, no raycast.
+  useFrame(() => {
+    if (!groupRef.current) return;
+    const targetScale = hoveredItem === "house" && !isZoomedIn ? 1.04 : 1;
+    scaleRef.current += (targetScale - scaleRef.current) * 0.1;
+    groupRef.current.scale.setScalar(scaleRef.current);
   });
+
+  // When the zoom state flips, the meaning of any current hover changes
+  // (e.g. "house" makes no sense once you're inside). Clear so the next
+  // pointer-move re-evaluates cleanly.
+  useEffect(() => {
+    lastHoverRef.current = null;
+    clearHover();
+  }, [isZoomedIn, clearHover]);
+
+  // Warm the polaroid texture cache in the background once the rest of the
+  // scene has mounted. They aren't visible until the user zooms in, so we
+  // never want them to block initial paint — but we also don't want a long
+  // pause the first time someone zooms in. requestIdleCallback (with a
+  // setTimeout fallback) downloads them during browser idle time.
+  useEffect(() => {
+    const preload = () => useLoader.preload(TextureLoader, POLAROID_PATHS);
+    const handle =
+      typeof window !== "undefined" && "requestIdleCallback" in window
+        ? window.requestIdleCallback(preload, { timeout: 4000 })
+        : setTimeout(preload, 1500);
+    return () => {
+      if (typeof window !== "undefined" && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback?.(handle);
+      } else {
+        clearTimeout(handle);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (roofRef.current) {
@@ -152,6 +162,8 @@ export default function Scene({ ...props }) {
         {...props}
         ref={groupRef}
         dispose={null}
+        onPointerMove={handlePointerMove}
+        onPointerOut={handlePointerOut}
         onClick={(e) => {
           // Only allow clicking if not already zoomed in
           if (isZoomedIn) return;
@@ -172,7 +184,17 @@ export default function Scene({ ...props }) {
             <SpeakerLight nodes={nodes} materials={materials} />
             <Calendar nodes={nodes} materials={materials} />
             <Bookshelf nodes={nodes} materials={materials} />
-            <PolaroidModel nodes={nodes} materials={materials} />
+            {/*
+             * Polaroids are only visible from inside the room. Defer mounting
+             * (and therefore texture loading) until the user actually zooms
+             * in. The textures are preloaded during idle time so the first
+             * zoom-in stays smooth.
+             */}
+            {isZoomedIn && (
+              <Suspense fallback={null}>
+                <PolaroidModel nodes={nodes} materials={materials} />
+              </Suspense>
+            )}
           </group>
         </scene>
       </group>

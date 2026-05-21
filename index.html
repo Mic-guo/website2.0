@@ -8,7 +8,11 @@
   </head>
   <body>
     <div id="root"></div>
-    <script src="/builds/ammo.js"></script>
+    <!--
+      Ammo.js (1.9 MB) is only needed by the /polaroid route. It is loaded
+      on-demand from src/PolaroidLine/loadAmmo.js so the landing page does
+      not pay for it on first paint.
+    -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

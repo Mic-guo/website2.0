@@ -8,6 +8,7 @@ import useStateStore from "../stores/stateStore";
 import NightModeToggle from "../components/NightModeToggle";
 import useUIStore from "../stores/UIStore";
 import useNavigationHandler from "../components/controllers/navigationHandler";
+import { loadAmmoScript } from "./loadAmmo";
 
 // This component handles the physics simulation within the Canvas context
 function PhysicsSimulation({ physicsWorld }) {
@@ -59,6 +60,7 @@ function PolaroidLine() {
 
     const initPhysics = async () => {
       try {
+        await loadAmmoScript();
         await Ammo();
         const collisionConfiguration =
           new Ammo.btSoftBodyRigidBodyCollisionConfiguration();

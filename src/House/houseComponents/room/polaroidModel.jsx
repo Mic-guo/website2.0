@@ -1,54 +1,72 @@
+import { useMemo } from "react";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import * as THREE from "three";
 
-export default function PolaroidModel({ nodes, materials }) {
-  // Load all textures with optimized settings
-  const loadTextureWithSettings = (path) => {
-    const texture = useLoader(TextureLoader, path);
-    texture.encoding = THREE.sRGBEncoding;
-    texture.anisotropy = 16;
-    texture.minFilter = THREE.LinearMipmapLinearFilter;
-    texture.magFilter = THREE.LinearFilter;
-    texture.generateMipmaps = true;
-    texture.center.set(0.5, 0.5);
-    texture.rotation = Math.PI / 2;
-    texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
+const POLAROID_COUNT = 27;
+export const POLAROID_PATHS = Array.from(
+  { length: POLAROID_COUNT },
+  (_, i) => `/images/IMG_${i + 1}.webp`
+);
 
-    // Wait for texture to load to get image dimensions
-    texture.onLoad = () => {
-      const imageAspect = texture.image.width / texture.image.height;
-      // Adjust UV coordinates to maintain aspect ratio
-      texture.matrixAutoUpdate = false;
-      texture.matrix.setUvTransform(0, 0, 1, 1, 0, 0.5, 0.5);
-      if (imageAspect > 1) {
-        texture.matrix.scale(1, imageAspect, 1);
-      } else {
-        texture.matrix.scale(1 / imageAspect, 1, 1);
-      }
-    };
+const configureTexture = (texture) => {
+  texture.encoding = THREE.sRGBEncoding;
+  texture.anisotropy = 4;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.generateMipmaps = true;
+  texture.center.set(0.5, 0.5);
+  texture.rotation = Math.PI / 2;
+  texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
 
-    return texture;
+  const applyAspectMatrix = () => {
+    if (!texture.image) return;
+    const imageAspect = texture.image.width / texture.image.height;
+    texture.matrixAutoUpdate = false;
+    texture.matrix.setUvTransform(0, 0, 1, 1, 0, 0.5, 0.5);
+    if (imageAspect > 1) {
+      texture.matrix.scale(1, imageAspect, 1);
+    } else {
+      texture.matrix.scale(1 / imageAspect, 1, 1);
+    }
   };
 
-  // Generate array of 27 textures
-  const textures = Array.from({ length: 27 }, (_, i) =>
-    loadTextureWithSettings(`/images/IMG_${i + 1}.jpeg`)
+  if (texture.image) {
+    applyAspectMatrix();
+  } else {
+    texture.onLoad = applyAspectMatrix;
+  }
+  return texture;
+};
+
+export default function PolaroidModel({ nodes, materials }) {
+  // Single batched load (suspends once for the whole set rather than 27 times)
+  const rawTextures = useLoader(TextureLoader, POLAROID_PATHS);
+
+  const textures = useMemo(
+    () => rawTextures.map((tex) => configureTexture(tex)),
+    [rawTextures]
   );
 
-  // Create a material configuration for photos that ignores lighting
-  const createPhotoMaterial = (textureIndex) => {
-    const texture = textures[textureIndex];
-    return new THREE.MeshStandardMaterial({
-      map: texture,
-      side: THREE.DoubleSide,
-      emissive: new THREE.Color(0xffffff),
-      emissiveMap: texture,
-      emissiveIntensity: 1.0,
-      metalness: 0,
-      roughness: 1,
-    });
-  };
+  // One material per photo, memoized so we don't recreate them on every render
+  const photoMaterials = useMemo(
+    () =>
+      textures.map(
+        (texture) =>
+          new THREE.MeshStandardMaterial({
+            map: texture,
+            side: THREE.DoubleSide,
+            emissive: new THREE.Color(0xffffff),
+            emissiveMap: texture,
+            emissiveIntensity: 1.0,
+            metalness: 0,
+            roughness: 1,
+          })
+      ),
+    [textures]
+  );
+
+  const createPhotoMaterial = (textureIndex) => photoMaterials[textureIndex];
 
   return (
     <group name="All Polaroids" position={[382.54, 89.79, -96.69]}>

@@ -1,13 +1,17 @@
-import { useRef, useEffect, useCallback } from "react";
+import { lazy, Suspense, useRef, useEffect, useCallback } from "react";
 import { gsap } from "gsap";
 import { TextPlugin } from "gsap/TextPlugin";
 import { useTheme } from "./context/ThemeContext";
 import SocialLink from "./components/SocialLink";
 import CursorText from "./components/CursorText";
-import House from "./House/House";
 import NightModeToggle from "./components/NightModeToggle";
 import useUIStore from "./stores/UIStore";
 import useNavigationHandler from "./components/controllers/navigationHandler";
+
+// Code-split the 3D house bundle (Three.js, R3F, Spline runtime, all of the
+// geometry modules) so the landing-page text + socials can paint immediately
+// while the house downloads + warms up in the background.
+const House = lazy(() => import("./House/House"));
 
 gsap.registerPlugin(TextPlugin);
 
@@ -93,7 +97,9 @@ const LandingPage = () => {
         //   fromPolaroid ? "blur-0" : "blur-2xl"
         // } cursor-none`}
       >
-        <House />
+        <Suspense fallback={null}>
+          <House />
+        </Suspense>
         <div
           ref={houseWrapperRef}
           className={`w-screen h-screen pointer-events-none ${
