@@ -1,3 +1,76 @@
+import * as THREE from "three";
+// @splinetool/loader v1.9.81 references GLSL names removed/changed in Three.js r154.
+// All shims must run before any Spline shader compiles.
+
+// 1. encodings_fragment → renamed to colorspace_fragment in r154
+if (!THREE.ShaderChunk.encodings_fragment) {
+  THREE.ShaderChunk.encodings_fragment =
+    THREE.ShaderChunk.colorspace_fragment ||
+    "gl_FragColor = linearToOutputTexel( gl_FragColor );";
+}
+
+// 2. lightmap_fragment → merged into lights_fragment_maps in r154
+if (!THREE.ShaderChunk.lightmap_fragment) {
+  THREE.ShaderChunk.lightmap_fragment = `
+#ifdef USE_LIGHTMAP
+  vec4 lightMapTexel = texture2D( lightMap, vLightMapUv );
+  vec3 lightMapIrradiance = lightMapTexel.rgb * lightMapIntensity;
+  reflectedLight.indirectDiffuse += lightMapIrradiance;
+#endif
+`;
+}
+
+// 3. GeometricContext struct + compat overloads for old light info functions.
+//    In r154 the lighting API changed:
+//      - GeometricContext struct was removed
+//      - getPointLightInfo/getSpotLightInfo now take vec3 geometryPosition
+//      - getDirectionalLightInfo now takes only 2 params (no geometry)
+//      - lightProbe uniform became conditional on USE_LIGHT_PROBES
+//    Spline's NodeMaterial vertex shader still uses all the old forms.
+if (!THREE.ShaderChunk.lights_pars_begin.includes("struct GeometricContext")) {
+  // Prepend the struct definition so it's available before any usage.
+  THREE.ShaderChunk.lights_pars_begin =
+    `struct GeometricContext {
+  vec3 position;
+  vec3 normal;
+  vec3 viewDir;
+#ifdef USE_CLEARCOAT
+  vec3 clearcoatNormal;
+#endif
+};\n` + THREE.ShaderChunk.lights_pars_begin;
+
+  // Make lightProbe always available (was conditional on USE_LIGHT_PROBES).
+  THREE.ShaderChunk.lights_pars_begin =
+    THREE.ShaderChunk.lights_pars_begin.replace(
+      "#if defined( USE_LIGHT_PROBES )\n\tuniform vec3 lightProbe[ 9 ];\n#endif",
+      "uniform vec3 lightProbe[ 9 ];"
+    );
+
+  // Append GeometricContext-accepting overloads after the original functions.
+  // PointLight/SpotLight structs are conditionally defined, so guard the overloads.
+  THREE.ShaderChunk.lights_pars_begin += `
+void getDirectionalLightInfo( const in DirectionalLight directionalLight, const in GeometricContext geometry, out IncidentLight light ) {
+  getDirectionalLightInfo( directionalLight, light );
+}
+#if NUM_POINT_LIGHTS > 0
+void getPointLightInfo( const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight light ) {
+  getPointLightInfo( pointLight, geometry.position, light );
+}
+#endif
+#if NUM_SPOT_LIGHTS > 0
+void getSpotLightInfo( const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight light ) {
+  getSpotLightInfo( spotLight, geometry.position, light );
+}
+#endif
+`;
+}
+
+// 4. geometryNormal ordering: Spline's NodeMaterial physical shader inlined a
+//    roughness calc that used geometryNormal before lights_fragment_begin
+//    declared it. This is fixed at the Vite build/optimizeDeps level by
+//    patching SplineLoader.js to use `normal` instead (see vite.config.js
+//    patchSplineGlslCompat). No runtime ShaderChunk patch needed here.
+
 import useSpline from "@splinetool/r3f-spline";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { Suspense, useCallback, useRef, useEffect } from "react";

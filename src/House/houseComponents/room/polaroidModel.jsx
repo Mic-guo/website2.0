@@ -10,7 +10,7 @@ export const POLAROID_PATHS = Array.from(
 );
 
 const configureTexture = (texture) => {
-  texture.encoding = THREE.sRGBEncoding;
+  texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 4;
   texture.minFilter = THREE.LinearMipmapLinearFilter;
   texture.magFilter = THREE.LinearFilter;

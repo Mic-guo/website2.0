@@ -141,9 +141,9 @@ const Moon = () => {
 const NightLighting = () => {
   return (
     <>
-      <ambientLight intensity={0.15} color="#3A3A5C" />
+      <ambientLight intensity={0.5} color="#3A3A5C" />
       <directionalLight
-        intensity={0.1}
+        intensity={0.3}
         position={[-10, 8, 10]}
         color="#E0E8FF"
         castShadow

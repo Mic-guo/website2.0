@@ -20,7 +20,7 @@ export function Model({ path, texturePath, rope, positionOnRope }) {
   // Use useTexture hook for texture loading
   const texture = texturePath
     ? useTexture(texturePath, (texture) => {
-        texture.encoding = THREE.sRGBEncoding;
+        texture.colorSpace = THREE.SRGBColorSpace;
         texture.anisotropy = 16;
         texture.minFilter = THREE.LinearMipmapLinearFilter;
         texture.magFilter = THREE.LinearFilter;

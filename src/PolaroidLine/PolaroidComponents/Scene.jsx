@@ -65,7 +65,7 @@ function Scene({ devMode = false, children }) {
             enabled: true,
             type: THREE.PCFSoftShadowMap,
           },
-          outputEncoding: THREE.sRGBEncoding,
+          outputColorSpace: THREE.SRGBColorSpace,
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1,
         },

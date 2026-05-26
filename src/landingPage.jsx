@@ -1,4 +1,5 @@
 import { lazy, Suspense, useRef, useEffect, useCallback } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { gsap } from "gsap";
 import { TextPlugin } from "gsap/TextPlugin";
 import { useTheme } from "./context/ThemeContext";
@@ -8,9 +9,8 @@ import NightModeToggle from "./components/NightModeToggle";
 import useUIStore from "./stores/UIStore";
 import useNavigationHandler from "./components/controllers/navigationHandler";
 
-// Code-split the 3D house bundle (Three.js, R3F, Spline runtime, all of the
-// geometry modules) so the landing-page text + socials can paint immediately
-// while the house downloads + warms up in the background.
+// Code-split the 3D house bundle so the landing-page text + socials can paint
+// immediately while the house downloads + warms up in the background.
 const House = lazy(() => import("./House/House"));
 
 gsap.registerPlugin(TextPlugin);
@@ -91,15 +91,12 @@ const LandingPage = () => {
 
   return (
     <>
-      <div
-        className="fixed cursor-none"
-        // className={`fixed filter ${
-        //   fromPolaroid ? "blur-0" : "blur-2xl"
-        // } cursor-none`}
-      >
-        <Suspense fallback={null}>
-          <House />
-        </Suspense>
+      <div className="fixed cursor-none">
+        <ErrorBoundary fallback={<div className="fixed inset-0 flex items-center justify-center text-red-500 text-sm font-mono">House scene failed to load — check console</div>}>
+          <Suspense fallback={null}>
+            <House />
+          </Suspense>
+        </ErrorBoundary>
         <div
           ref={houseWrapperRef}
           className={`w-screen h-screen pointer-events-none ${
