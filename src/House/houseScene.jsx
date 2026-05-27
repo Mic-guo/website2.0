@@ -238,6 +238,9 @@ export default function Scene({ ...props }) {
         onPointerMove={handlePointerMove}
         onPointerOut={handlePointerOut}
         onClick={(e) => {
+          // Alt+click is reserved for the debug panel's object-picker; let
+          // it through without triggering the zoom-in navigation.
+          if (e.nativeEvent?.altKey) return;
           // Only allow clicking if not already zoomed in
           if (isZoomedIn) return;
 

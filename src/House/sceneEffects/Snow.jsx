@@ -1,28 +1,29 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { MODEL_BASE_POSITION } from "../../utils/constants";
+import useDebugStore from "../../stores/debugStore";
 
 export default function Snow() {
-  // Create snow particles
-  const [snowParticles] = useState(() => {
-    const NUM_PARTICLES = 200;
-    const SPREAD_RANGE = 8000;
-    const HEIGHT_RANGE = 2000;
+  const { count, size, color, opacity, spreadRange, heightRange } =
+    useDebugStore((s) => s.snow);
+
+  // Particle list + geometry are derived from count/spreadRange/heightRange so
+  // they rebuild whenever the user tweaks those. The arrays are mutated in
+  // useFrame for animation, so they need to be wholly recreated on resize.
+  const snowParticles = useMemo(() => {
     const ROOF_Y_POSITION = 3646.42;
     const BASE_Y_POSITION = MODEL_BASE_POSITION.y - 1009.82;
-    const particles = new Array(NUM_PARTICLES).fill().map(() => ({
+    return new Array(count).fill().map(() => ({
       position: new THREE.Vector3(
-        Math.random() * SPREAD_RANGE - SPREAD_RANGE / 2 + MODEL_BASE_POSITION.x,
-        Math.random() * (HEIGHT_RANGE + ROOF_Y_POSITION) + BASE_Y_POSITION,
-        Math.random() * SPREAD_RANGE - SPREAD_RANGE / 2 + MODEL_BASE_POSITION.z
+        Math.random() * spreadRange - spreadRange / 2 + MODEL_BASE_POSITION.x,
+        Math.random() * (heightRange + ROOF_Y_POSITION) + BASE_Y_POSITION,
+        Math.random() * spreadRange - spreadRange / 2 + MODEL_BASE_POSITION.z
       ),
       velocity: Math.random() * 4 + 1,
     }));
-    return particles;
-  });
+  }, [count, spreadRange, heightRange]);
 
-  // Create points geometry for snow
   const snowGeometry = useMemo(() => {
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(snowParticles.length * 3);
@@ -35,14 +36,13 @@ export default function Snow() {
 
     geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
     return geometry;
-  }, []);
+  }, [snowParticles]);
 
   // Animation loop for snow
   useFrame(() => {
     const ROOF_Y_POSITION = 3646.42;
     const BASE_Y_POSITION = MODEL_BASE_POSITION.y - 1009.82;
     const SNOW_RESET_OFFSET = 2000;
-    const SPREAD_RANGE = 8000;
 
     // House dimensions calculated from sides+base.jsx
     const HOUSE_BOUNDS = {
@@ -66,13 +66,13 @@ export default function Snow() {
         (!isWithinHouseBounds && particle.position.y < BASE_Y_POSITION)
       ) {
         particle.position.x =
-          Math.random() * SPREAD_RANGE -
-          SPREAD_RANGE / 2 +
+          Math.random() * spreadRange -
+          spreadRange / 2 +
           MODEL_BASE_POSITION.x;
         particle.position.y = ROOF_Y_POSITION + SNOW_RESET_OFFSET;
         particle.position.z =
-          Math.random() * SPREAD_RANGE -
-          SPREAD_RANGE / 2 +
+          Math.random() * spreadRange -
+          spreadRange / 2 +
           MODEL_BASE_POSITION.z;
       }
     });
@@ -90,10 +90,10 @@ export default function Snow() {
     <points>
       <primitive object={snowGeometry} />
       <pointsMaterial
-        size={4}
-        color="#ffffff"
+        size={size}
+        color={color}
         transparent
-        opacity={0.8}
+        opacity={opacity}
         sizeAttenuation
       />
     </points>

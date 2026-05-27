@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import useDebugStore from "../../stores/debugStore";
 
 // Sunset sky with gradient
 export const SunsetSky = () => {
   const { scene } = useThree();
+  const { stop1, stop2 } = useDebugStore((s) => s.daySky);
 
   useEffect(() => {
     // Create a texture to hold our gradient
@@ -17,8 +19,8 @@ export const SunsetSky = () => {
     // Create gradient
     const gradient = context.createLinearGradient(0, 0, 0, size);
 
-    gradient.addColorStop(0.3, "#d1a658");
-    gradient.addColorStop(0.6, "#fa874d");
+    gradient.addColorStop(stop1.offset, stop1.color);
+    gradient.addColorStop(stop2.offset, stop2.color);
 
     // Apply gradient to canvas
     context.fillStyle = gradient;
@@ -45,23 +47,28 @@ export const SunsetSky = () => {
       scene.background = oldBackground;
       texture.dispose();
     };
-  }, [scene]);
+  }, [scene, stop1.offset, stop1.color, stop2.offset, stop2.color]);
 
   return null;
 };
 
 // Daytime lighting component
 const DayLighting = () => {
+  const { ambient, directional, point } = useDebugStore((s) => s.dayLighting);
   return (
     <>
-      <ambientLight intensity={0.2} color="#FFA07A" />
+      <ambientLight intensity={ambient.intensity} color={ambient.color} />
       <directionalLight
-        intensity={0.4}
-        position={[-10, 8, 10]}
-        color="#FF7E5F"
+        intensity={directional.intensity}
+        position={directional.position}
+        color={directional.color}
         castShadow
       />
-      <pointLight intensity={0.4} position={[-20, 10, -10]} color="#FFD700" />
+      <pointLight
+        intensity={point.intensity}
+        position={point.position}
+        color={point.color}
+      />
     </>
   );
 };

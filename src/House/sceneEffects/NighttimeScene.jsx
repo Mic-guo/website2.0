@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
-import { useThree, useFrame } from "@react-three/fiber";
+import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import useDebugStore from "../../stores/debugStore";
 
 // Nighttime sky with stars
 export const NighttimeSky = () => {
   const { scene } = useThree();
+  const { stop1, stop2, stop3 } = useDebugStore((s) => s.nightSky);
 
   useEffect(() => {
     // Create a texture to hold our gradient
@@ -16,9 +18,9 @@ export const NighttimeSky = () => {
 
     // Create gradient - dark blue to black
     const gradient = context.createLinearGradient(0, 0, 0, size);
-    gradient.addColorStop(0.01, "#030b1c"); // Dark blue
-    gradient.addColorStop(0.6, "#0F1E45"); // light blue
-    gradient.addColorStop(0.9, "#1A1A40"); // light purple
+    gradient.addColorStop(stop1.offset, stop1.color);
+    gradient.addColorStop(stop2.offset, stop2.color);
+    gradient.addColorStop(stop3.offset, stop3.color);
 
     // Apply gradient to canvas
     context.fillStyle = gradient;
@@ -45,7 +47,15 @@ export const NighttimeSky = () => {
       scene.background = oldBackground;
       texture.dispose();
     };
-  }, [scene]);
+  }, [
+    scene,
+    stop1.offset,
+    stop1.color,
+    stop2.offset,
+    stop2.color,
+    stop3.offset,
+    stop3.color,
+  ]);
 
   return null;
 };
@@ -53,10 +63,16 @@ export const NighttimeSky = () => {
 // Stars component with twinkling effect
 export const Stars = () => {
   const starsRef = useRef();
-  const starCount = 100;
+  const { count, sizeMin, sizeMax, color } = useDebugStore((s) => s.stars);
 
   useEffect(() => {
-    for (let i = 0; i < starCount; i++) {
+    const container = starsRef.current;
+    if (!container) return;
+
+    const created = [];
+    const sizeRange = sizeMax - sizeMin;
+
+    for (let i = 0; i < count; i++) {
       const starGeometry = new THREE.BufferGeometry();
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.random() * Math.PI * 0.5;
@@ -72,33 +88,33 @@ export const Stars = () => {
       );
 
       const starMaterial = new THREE.PointsMaterial({
-        color: 0xfbfec6,
+        color: new THREE.Color(color),
         transparent: false,
         opacity: 0.8,
         blending: THREE.AdditiveBlending,
         sizeAttenuation: true,
-        size: Math.random() * 3 + 1, // Individual size for each star
+        size: Math.random() * sizeRange + sizeMin,
       });
 
       const star = new THREE.Points(starGeometry, starMaterial);
-      starsRef.current.add(star);
+      container.add(star);
+      created.push(star);
     }
 
     return () => {
-      // Add null check before cleanup
-      if (starsRef.current) {
-        starsRef.current.children.forEach((star) => {
-          star.geometry.dispose();
-          star.material.dispose();
-        });
-      }
+      created.forEach((star) => {
+        container.remove(star);
+        star.geometry.dispose();
+        star.material.dispose();
+      });
     };
-  }, []);
+  }, [count, sizeMin, sizeMax, color]);
 
   return <group ref={starsRef} />;
 };
 
 // Moon component
+// eslint-disable-next-line no-unused-vars
 const Moon = () => {
   const moonRef = useRef();
 
@@ -139,13 +155,14 @@ const Moon = () => {
 
 // Nighttime lighting component
 const NightLighting = () => {
+  const { ambient, directional } = useDebugStore((s) => s.nightLighting);
   return (
     <>
-      <ambientLight intensity={0.5} color="#3A3A5C" />
+      <ambientLight intensity={ambient.intensity} color={ambient.color} />
       <directionalLight
-        intensity={0.3}
-        position={[-10, 8, 10]}
-        color="#E0E8FF"
+        intensity={directional.intensity}
+        position={directional.position}
+        color={directional.color}
         castShadow
       />
     </>
