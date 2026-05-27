@@ -1,4 +1,7 @@
+import useDebugStore from "../../../stores/debugStore";
+
 export default function SpeakerLight({ nodes, materials }) {
+  const speakerLight = useDebugStore((s) => s.speakerLight);
   return (
     <group
       name="Lamp + light"
@@ -60,14 +63,14 @@ export default function SpeakerLight({ nodes, materials }) {
         <pointLight
           name="Point Light"
           castShadow
-          intensity={0.97}
-          decay={6}
-          distance={4574}
+          intensity={speakerLight.intensity}
+          decay={speakerLight.decay}
+          distance={speakerLight.distance}
           shadow-mapSize-width={1024}
           shadow-mapSize-height={1024}
           shadow-camera-near={100}
           shadow-camera-far={100000}
-          color="#fee5bc"
+          color={speakerLight.color}
           position={[-38.89, 37.83, 2.17]}
           rotation={[0, 0.93, 0.01]}
           scale={0.37}
